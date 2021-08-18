@@ -80,7 +80,6 @@ public class GuitarController : MonoBehaviour
             
             AnimateTransform animator = guitarBody.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
             animator.Configure(selectedGuitarLocation, 1f, curveForGuitarTransitions);
-            //todo animate this ^
         }
 
     }
@@ -109,18 +108,21 @@ public class GuitarController : MonoBehaviour
 
     private void SwipeAction_OnSwipe(SwipeData data)
     {
-        if (data.Direction == SwipeDirection.Left){
+        if (guitarSelected){
+            if (data.Direction == SwipeDirection.Left){
+                int nextGuitar = selectedGuitarIndex - 1;
+                nextGuitar = Mathf.Max(0, nextGuitar);
+                SelectGuitar(nextGuitar);
+            }
 
- 
-        }
 
-
-        else if (data.Direction == SwipeDirection.Right){
-
-
+            else if (data.Direction == SwipeDirection.Right){
+                int nextGuitar = selectedGuitarIndex + 1;
+                nextGuitar = Mathf.Min(guitars.Count -1, nextGuitar);
+                SelectGuitar(nextGuitar);
+            }
         }
     }
 
-    static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
 }
