@@ -1,0 +1,11 @@
+Model Information:
+* title:	Electric Guitar (Jackson Soloist SL2Q)
+* source:	https://sketchfab.com/3d-models/electric-guitar-jackson-soloist-sl2q-1935508eb3db4bd8a962e9325f4d49fb
+* author:	Oliver Triplett (https://sketchfab.com/OliverTriplett)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Electric Guitar (Jackson Soloist SL2Q)" (https://sketchfab.com/3d-models/electric-guitar-jackson-soloist-sl2q-1935508eb3db4bd8a962e9325f4d49fb) by Oliver Triplett (https://sketchfab.com/OliverTriplett) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

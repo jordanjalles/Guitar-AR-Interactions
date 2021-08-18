@@ -1,0 +1,324 @@
+{
+  "accessors": [
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 7614,
+      "max": [
+        5.1840200424194336,
+        0.29965001344680786,
+        13.091620445251465
+      ],
+      "min": [
+        -4.8057599067687988,
+        -1.3419300317764282,
+        -13.434379577636719
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 2,
+      "byteOffset": 91368,
+      "componentType": 5126,
+      "count": 7614,
+      "max": [
+        1,
+        1,
+        1
+      ],
+      "min": [
+        -0.99999898672103882,
+        -1,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 7614,
+      "max": [
+        1,
+        0.9999924898147583,
+        0.99927181005477905,
+        1
+      ],
+      "min": [
+        -0.99998915195465088,
+        -0.99994742870330811,
+        -0.99991589784622192,
+        -1
+      ],
+      "type": "VEC4"
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 7614,
+      "max": [
+        0.85089999437332153,
+        0.99989998340606689
+      ],
+      "min": [
+        -0.065250001847743988,
+        0.10397999733686447
+      ],
+      "type": "VEC2"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 42498,
+      "max": [
+        7613
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "AvidLebon (https://sketchfab.com/avidlebon)",
+      "license": "CC-BY-NC-SA-4.0 (http://creativecommons.org/licenses/by-nc-sa/4.0/)",
+      "source": "https://sketchfab.com/models/8d946a3a7f0f4b69a219366792485b0d",
+      "title": "Flying V Electric Guitar"
+    },
+    "generator": "Sketchfab-3.22.13",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 169992,
+      "byteOffset": 0,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 60912,
+      "byteOffset": 169992,
+      "byteStride": 8,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 182736,
+      "byteOffset": 230904,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 121824,
+      "byteOffset": 413640,
+      "byteStride": 16,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 535464,
+      "uri": "scene.bin"
+    }
+  ],
+  "images": [
+    {
+      "uri": "textures/GutarUpperTexture_baseColor.png"
+    },
+    {
+      "uri": "textures/GutarUpperTexture_normal.png"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "name": "GutarUpperTexture",
+      "normalTexture": {
+        "index": 1,
+        "scale": 1,
+        "texCoord": 0
+      },
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "baseColorTexture": {
+          "index": 0,
+          "texCoord": 0
+        },
+        "metallicFactor": 0,
+        "roughnessFactor": 0.59999999999999998
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Guitar",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0,
+            "TANGENT": 2,
+            "TEXCOORD_0": 3
+          },
+          "indices": 4,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "name": "RootNode (gltf orientation matrix)",
+      "rotation": [
+        -0.70710678118654746,
+        -0,
+        -0,
+        0.70710678118654757
+      ]
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "RootNode (model correction matrix)"
+    },
+    {
+      "children": [
+        3,
+        5,
+        7
+      ],
+      "name": "Root"
+    },
+    {
+      "children": [
+        4
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0.24504000000000004,
+        -0.066060000000000021,
+        -0.84149000000000007,
+        1
+      ],
+      "name": "Guitar"
+    },
+    {
+      "mesh": 0,
+      "name": "Guitar"
+    },
+    {
+      "children": [
+        6
+      ],
+      "matrix": [
+        0.79761000000000004,
+        0.5025099999999999,
+        0.33364000000000005,
+        0,
+        -0.59140000000000004,
+        0.54270000000000007,
+        0.59643000000000002,
+        0,
+        0.11865000000000002,
+        -0.67303000000000013,
+        0.73004000000000013,
+        0,
+        0.87540000000000007,
+        -11.481359999999999,
+        4.3860600000000005,
+        1
+      ],
+      "name": "Sun"
+    },
+    {
+      "name": "Sun"
+    },
+    {
+      "children": [
+        8
+      ],
+      "matrix": [
+        0.79761000000000004,
+        0.48747000000000007,
+        -0.35524,
+        0,
+        -0.59140000000000004,
+        0.74785000000000013,
+        -0.30161000000000004,
+        0,
+        0.11865000000000002,
+        0.45065,
+        0.88478000000000012,
+        0,
+        -0.53574000000000011,
+        9.6505700000000001,
+        6.4791200000000009,
+        1
+      ],
+      "name": "Sun.001"
+    },
+    {
+      "name": "Sun.001"
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "OSG_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "sampler": 0,
+      "source": 0
+    },
+    {
+      "sampler": 0,
+      "source": 1
+    }
+  ]
+}
+
