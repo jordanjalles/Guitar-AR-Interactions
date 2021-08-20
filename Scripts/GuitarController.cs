@@ -70,7 +70,7 @@ public class GuitarController : MonoBehaviour
         }
 
         //if we are selecting a new guitar
-        if (index != selectedGuitarIndex){
+        if ((!guitarSelected) || (index != selectedGuitarIndex)){
             guitarSelected = true;
             selectedGuitarIndex = index;
             Transform guitarBody = guitars[selectedGuitarIndex];
@@ -79,8 +79,17 @@ public class GuitarController : MonoBehaviour
             
             AnimateTransform animator = guitarBody.gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
             animator.Configure(selectedGuitarLocation, 1f, curveForGuitarTransitions);
+
+            AudioTest();
         }
 
+    }
+
+    private void AudioTest(){
+        AudioSource audioSource = guitars[selectedGuitarIndex].GetComponent<AudioSource>();
+        if (audioSource != null){
+            audioSource.Play();
+        }
     }
 
     private void DeselectGuitar(int index){
