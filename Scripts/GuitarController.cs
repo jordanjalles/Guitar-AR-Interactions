@@ -12,7 +12,6 @@ public class GuitarController : MonoBehaviour
     
     [SerializeField]
     private Transform selectedGuitarLocation;
-    private Transform selectedGuitarInitialLocation;
 
     private bool guitarSelected = false;
     private int selectedGuitarIndex;
@@ -28,8 +27,6 @@ public class GuitarController : MonoBehaviour
     {
         SwipeDetector.OnSwipe += SwipeAction_OnSwipe;
         TapDetector.OnTap += TapAction_OnTap;
-
-        selectedGuitarInitialLocation = new GameObject().transform;
 
         //get the child guitars
         foreach (ARSelectable child in GetComponentsInChildren(typeof(ARSelectable))){
@@ -74,11 +71,9 @@ public class GuitarController : MonoBehaviour
             guitarSelected = true;
             selectedGuitarIndex = index;
             Transform guitarBody = guitars[selectedGuitarIndex];
-            selectedGuitarInitialLocation.position = guitarBody.position; //save the initial location
-            selectedGuitarInitialLocation.rotation = guitarBody.rotation; //save the initial rotation
             
             AnimateTransform animator = guitarBody.gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
-            animator.Configure(selectedGuitarLocation, 1f, curveForGuitarTransitions);
+            animator.Configure(selectedGuitarLocation.position, selectedGuitarLocation.rotation.eulerAngles, 1f, curveForGuitarTransitions);
 
             AudioTest();
         }
@@ -93,10 +88,10 @@ public class GuitarController : MonoBehaviour
     }
 
     private void DeselectGuitar(int index){
-
         guitarSelected = false;
         AnimateTransform animator = guitars[selectedGuitarIndex].gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
-        animator.Configure(selectedGuitarInitialLocation, 1f, curveForGuitarTransitions);
+        ARSelectable selectedGuitar = guitars[selectedGuitarIndex].GetComponent<ARSelectable>();
+        animator.Configure(selectedGuitar.homePosition, selectedGuitar.homeRotation, 1f, curveForGuitarTransitions);
     }
 
 

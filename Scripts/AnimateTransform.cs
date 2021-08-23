@@ -16,11 +16,20 @@ public class AnimateTransform : MonoBehaviour
     private float duration = 1.0f;    
     private AnimationCurve curve;
 
-    public void Configure(Transform target, float duration, AnimationCurve curve){
+    public void Configure(Vector3 targetPosition, Vector3 targetRotation, float duration, AnimationCurve curve){
         this.curve = curve;
-        this.targetPos = target.position;
-        this.targetRot = target.rotation;
+        this.targetPos = targetPosition;
+        this.targetRot = Quaternion.Euler(targetRotation);
         this.duration = duration;
+
+        //if this gameobject currently has a another AnimateTransform, cancel it
+        foreach (AnimateTransform anim in GetComponents<AnimateTransform>()){
+            if (anim != this){
+                Destroy(anim);
+                Debug.Log("Canceled other animation");
+            }
+        }
+
     }
 
     void Start()
@@ -34,6 +43,8 @@ public class AnimateTransform : MonoBehaviour
     void Update()
     {
         if (Time.time - startTime > duration){
+            transform.position = targetPos;
+            transform.rotation = targetRot;
             Destroy(this);
         }
         else
