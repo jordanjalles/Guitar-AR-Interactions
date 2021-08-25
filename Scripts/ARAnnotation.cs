@@ -71,10 +71,23 @@ public class ARAnnotation : MonoBehaviour
     }
 
     public void Activate(){
+        if (ARAnnotation.focusedAnnotation != null){
+            float myDistance = Vector3.Distance(m_Camera.transform.position, transform.position);
+            if (ARAnnotation.focusedAnnotation.isCloserToCameraThan(myDistance)){
+                return; //do nothing if the other is closer to the camera
+            }
+        }
+
+        ARAnnotation.focusedAnnotation = this;
         state = State.active;
         annotationHint.SetActive(false);
         //annotationDetail.SetActive(true);
         annotationMarker.SetActive(true);
+    }
+
+    public bool isCloserToCameraThan(float yourDistance){
+        float myDistance = Vector3.Distance(m_Camera.transform.position, transform.position);
+        return (myDistance < yourDistance);
     }
 
     public void Hide(){
