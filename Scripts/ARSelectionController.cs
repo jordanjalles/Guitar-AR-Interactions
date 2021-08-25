@@ -15,7 +15,7 @@ public class ARSelectionController : MonoBehaviour
     private Camera arCamera;
 
     private List<Transform> selectables = new List<Transform>();
-    private bool selected = false;
+    private bool itemSelected = false;
     private int selectedIndex = -1;
     private int newSelectableTouchedIndex;
     private Vector2 lastTouchPosition;
@@ -47,7 +47,7 @@ public class ARSelectionController : MonoBehaviour
         {
             if(selectables.Contains(hitObject.transform)){ 
                 newSelectableTouchedIndex = selectables.IndexOf(hitObject.transform);
-                if (selectedIndex == newSelectableTouchedIndex && selected)
+                if (selectedIndex == newSelectableTouchedIndex && itemSelected)
                 {
                     interactionState = InteractionState.grabbingSelected;
                 }else
@@ -79,7 +79,7 @@ public class ARSelectionController : MonoBehaviour
             }
         }else{
             //if the touch began and ended on empty space, deselect the previously selected guitar
-            if (interactionState == InteractionState.touchingEmpty && selected)
+            if (interactionState == InteractionState.touchingEmpty && itemSelected)
             {
                 //deselect selected guitar
                 DeselectItem(selectedIndex);
@@ -103,7 +103,7 @@ public class ARSelectionController : MonoBehaviour
     //take the selected guitar and move it to the selected guitar location
     private void SelectGuitar(int index){
         //deselect the previous selected guitar
-        if (selected){
+        if (itemSelected){
             if (index != selectedIndex){
                 DeselectItem(selectedIndex);
             }
@@ -111,22 +111,25 @@ public class ARSelectionController : MonoBehaviour
 
         //if no guitar was selected or a different guitar was selected select the new guitar
         //otherwise do nothing (that means we have selected the same guitar)
-        if ((!selected) || (index != selectedIndex)){
+        if ((!itemSelected) || (index != selectedIndex)){
 
-            selected = true;
+            itemSelected = true;
             selectedIndex = index;
+            ARSelectable selectedItem = selectables[selectedIndex].GetComponent<ARSelectable>();
+            selectedItem.Select();
             
-            //move the selected guitar location to 1 meter in front of the camera
-            selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1f);
+            //move the selected guitar location to 0.75 meter in front of the camera
+            selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 0.75f);
             //rotate it to look at the camera...had to flip the rotation because of the guitar's rotation
             selectedTargetLocation.LookAt(arCamera.transform.position); 
             selectedTargetLocation.Rotate(Vector3.up, 180);
 
-            Transform itemBody = selectables[selectedIndex];
+            Transform itemBody = selectedItem.transform;
 
             AnimateTransform animator = itemBody.gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
             animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
-
+        
+            
             PlaySelectedItemAudio();
         }
 
@@ -140,16 +143,18 @@ public class ARSelectionController : MonoBehaviour
     }
 
     private void DeselectItem(int index){
-        selected = false;
-        AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
+        itemSelected = false;
         ARSelectable selectedItem = selectables[selectedIndex].GetComponent<ARSelectable>();
+        selectedItem.Deselect();
+
+        AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
         animator.Configure (selectedItem.homePosition, selectedItem.homeRotation, 1f, curveForTransitions);
     }
 
     private void SwipeAction_OnSwipe(SwipeData data)
     {
         //disabling while I get rotations working
-        if (selected && interactionState != InteractionState.grabbingSelected){
+        if (itemSelected && interactionState != InteractionState.grabbingSelected){
             if (data.Direction == SwipeDirection.Left){
                 int nextGuitar = selectedIndex - 1;
                 nextGuitar = Mathf.Max(0, nextGuitar);

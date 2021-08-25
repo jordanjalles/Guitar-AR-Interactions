@@ -14,11 +14,24 @@ public class ARSelectable : MonoBehaviour
     {
         this.homePosition = this.transform.position;
         this.homeRotation = this.transform.rotation.eulerAngles;
+        Deselect();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void Select(){
+        Debug.Log("Selecting " + this.name);
+        this.isSelected = true;
+        //get all arannotations in children and activate them
+        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>(includeInactive : true)){
+            a.gameObject.SetActive(true);
+            Debug.Log("Activating " + a.name);
+        }
+    }
+
+    public void Deselect(){
+        this.isSelected = false;
+        //todo turn off annotations
+        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>()){
+            a.gameObject.SetActive(false);
+        }
     }
 }
