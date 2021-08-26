@@ -19,6 +19,9 @@ public class ARSelectionController : MonoBehaviour
     private int selectedIndex = -1;
     private int newSelectableTouchedIndex;
     private Vector2 lastTouchPosition;
+    private float lastTwoFingerDistance;
+    private float lastTwoFingerAngle;
+    private Vector2 lastTwoFingerAveragePosition;
 
     enum InteractionState { touchingNew, grabbingSelected, touchingEmpty, notTouching, twoFingersTouching};
     private InteractionState interactionState = InteractionState.notTouching;
@@ -29,6 +32,7 @@ public class ARSelectionController : MonoBehaviour
         BasicInputDetector.OnTouchBegan += OnTouchBegan;
         BasicInputDetector.OnTouchEnded += OnTouchEnded;
         BasicInputDetector.OnTouchMoved += OnTouchMoved;
+        BasicInputDetector.OnTwoTouches += OnTwoTouches;
 
         //get the child guitars
         foreach (ARSelectable child in GetComponentsInChildren(typeof(ARSelectable))){
@@ -74,7 +78,7 @@ public class ARSelectionController : MonoBehaviour
             {
                 if (selectables.IndexOf(hitObject.transform) == newSelectableTouchedIndex) 
                 {
-                    SelectGuitar(newSelectableTouchedIndex);
+                    SelectItem(newSelectableTouchedIndex);
                 }
             }
         }else{
@@ -100,8 +104,50 @@ public class ARSelectionController : MonoBehaviour
         }
     }
 
+    private void OnTwoTouches(Vector2 touchOne, Vector2 touchTwo){
+        //get the distance, angle, and average position of the two touches
+        float newTwoFingerDistance = Vector2.Distance(touchOne, touchTwo);
+        float newTwoFingerAngle = Vector2.Angle(new Vector2(0, 1), touchOne-touchTwo)*Mathf.Sign(touchOne.x - touchTwo.x);
+        Vector2 newTwoFingerAveragePosition = (touchOne + touchTwo)/2f;
+
+        //if we're just starting, set up
+        if (interactionState != InteractionState.twoFingersTouching){
+            interactionState = InteractionState.twoFingersTouching;
+            lastTwoFingerDistance = newTwoFingerDistance;
+            lastTwoFingerAngle = newTwoFingerAngle;
+            lastTwoFingerAveragePosition = newTwoFingerAveragePosition;
+        //else, the fingers might have moved
+        }else{
+            //how much have they moved?
+            float distanceDelta = lastTwoFingerDistance - newTwoFingerDistance;
+            float angleDelta = lastTwoFingerAngle - newTwoFingerAngle;
+            Vector2 averagePositionDelta = lastTwoFingerAveragePosition - newTwoFingerAveragePosition;
+
+            //move Z by distanceDelta
+            //rotate Z by angleDelta
+            //move XY by averagePositionDelta
+            if (itemSelected){
+                Transform selectedItem = selectables[selectedIndex];
+                Vector3 cameraToSelected = (arCamera.transform.position - selectedItem.position);
+
+                //rotate on camera axis
+                selectedItem.Rotate(selectedItem.InverseTransformDirection(arCamera.transform.forward), angleDelta);
+                //push pull towards and away from camera
+                selectedItem.position -= (cameraToSelected)*distanceDelta*0.001f;
+                //move xy
+                selectedItem.position -= arCamera.transform.right * averagePositionDelta.x * 0.001f;
+                selectedItem.position -= Vector3.up * averagePositionDelta.y * 0.001f;
+            }
+
+            //store the most recent inputs for next frame
+            lastTwoFingerAngle = newTwoFingerAngle;
+            lastTwoFingerDistance = newTwoFingerDistance;
+            lastTwoFingerAveragePosition = newTwoFingerAveragePosition;
+        }
+    }
+
     //take the selected guitar and move it to the selected guitar location
-    private void SelectGuitar(int index){
+    private void SelectItem(int index){
         //deselect the previous selected guitar
         if (itemSelected){
             if (index != selectedIndex){

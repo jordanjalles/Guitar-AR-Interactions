@@ -8,6 +8,7 @@ public class BasicInputDetector : MonoBehaviour
     public static event Action<Vector2> OnTouchBegan = delegate { };
     public static event Action<Vector2> OnTouchMoved = delegate { };
     public static event Action<Vector2> OnTouchEnded = delegate { };
+    public static event Action<Vector2, Vector2> OnTwoTouches = delegate { };
 
 
     void Start()
@@ -18,8 +19,10 @@ public class BasicInputDetector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Touch touch in Input.touches)
+
+        if (Input.touchCount == 1)
         {
+            var touch = Input.touches[0];
             if (touch.phase == TouchPhase.Began)
             {
                 OnTouchBegan(touch.position);
@@ -32,6 +35,9 @@ public class BasicInputDetector : MonoBehaviour
             {   
                 OnTouchEnded(touch.position);
             }
+        }
+        if (Input.touchCount == 2){
+            OnTwoTouches(Input.touches[0].position, Input.touches[1].position);
         }
     }
 }
