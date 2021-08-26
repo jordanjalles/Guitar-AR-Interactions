@@ -16,6 +16,8 @@ public class AnimateTransform : MonoBehaviour
     private float duration = 1.0f;    
     private AnimationCurve curve;
 
+    
+
     public void Configure(Vector3 targetPosition, Vector3 targetRotation, float duration, AnimationCurve curve){
         this.curve = curve;
         this.targetPos = targetPosition;
@@ -45,6 +47,7 @@ public class AnimateTransform : MonoBehaviour
         if (Time.time - startTime > duration){
             transform.position = targetPos;
             transform.rotation = targetRot;
+            OnComplete();
             Destroy(this);
         }
         else
@@ -54,4 +57,7 @@ public class AnimateTransform : MonoBehaviour
             transform.rotation = Quaternion.Slerp(fromRot, targetRot, percentage);
         }
     }
+
+    public delegate void DelegateEvent();
+    public DelegateEvent OnComplete = () => {};
 }

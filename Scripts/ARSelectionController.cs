@@ -174,7 +174,7 @@ public class ARSelectionController : MonoBehaviour
 
             AnimateTransform animator = itemBody.gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
             animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
-        
+            animator.OnComplete = () => {Debug.Log("Delegate function called!");};
             
             PlaySelectedItemAudio();
         }
