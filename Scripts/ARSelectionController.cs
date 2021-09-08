@@ -172,8 +172,10 @@ public class ARSelectionController : MonoBehaviour
 
             Transform itemBody = selectedItem.transform;
 
-            AnimateTransform animator = itemBody.gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
+            AnimateTransform animator = itemBody.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
             animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
+            
+            //might use this to change selected item parent to the camera, and back to the previous parent on deselect
             animator.OnComplete = () => {Debug.Log("Delegate function called!");};
             
             PlaySelectedItemAudio();
@@ -193,7 +195,7 @@ public class ARSelectionController : MonoBehaviour
         ARSelectable selectedItem = selectables[selectedIndex].GetComponent<ARSelectable>();
         selectedItem.Deselect();
 
-        AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent(typeof(AnimateTransform)) as AnimateTransform; //animate the guitar body to the selected guitar location
+        AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
         animator.Configure (selectedItem.homePosition, selectedItem.homeRotation, 1f, curveForTransitions);
     }
 

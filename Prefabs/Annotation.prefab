@@ -46,9 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxVisibilityDistance: 2
   maxActivationDistance: 1
-  annotationHint: {fileID: 6904621694584792515, guid: 6bb26b02547914eaf958de8716f896ca,
+  annotationHint: {fileID: 2863291284765708369, guid: 6bb26b02547914eaf958de8716f896ca,
     type: 3}
-  annotationMarker: {fileID: 2321561503192342484, guid: f5537c46c5ed447719aea494f6bb7942,
+  annotationMarker: {fileID: 2846613011585325368, guid: 55de685f23d7d439fab7a7d86c2d3bef,
     type: 3}
   annotationDetail: {fileID: 0}
 --- !u!114 &-1762023017881566207
