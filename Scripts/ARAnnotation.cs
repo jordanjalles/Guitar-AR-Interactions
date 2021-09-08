@@ -27,9 +27,6 @@ public class ARAnnotation : MonoBehaviour
     //use this to detect conflicts with other ARAnnotations
     static ARAnnotation focusedAnnotation;
 
-    [SerializeField]
-    private Canvas canvas;
-
     private ARAnnotationDisplay annotationDisplay;
 
     //state enums
@@ -41,10 +38,7 @@ public class ARAnnotation : MonoBehaviour
         m_Camera = Camera.main;
         //instantiate the annotation game objects
         annotationMarker = Instantiate(annotationMarker, transform.position,  Quaternion.identity, transform);
-        //annotationDetailTexture = Instantiate(annotationDetailTexture);
         annotationHint = Instantiate(annotationHint, transform.position, Quaternion.identity, transform);
-
-        //annotationDisplay = canvas.GetComponentsInChildren<ARAnnotationDisplay>(includeInactive: true)[0];
         annotationDisplay = FindObjectsOfType<ARAnnotationDisplay>(includeInactive: true)[0];
         
 
