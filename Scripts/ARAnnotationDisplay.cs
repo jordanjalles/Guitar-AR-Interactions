@@ -26,7 +26,7 @@ public class ARAnnotationDisplay : MonoBehaviour
         AnimateRectTransform animator = gameObject.AddComponent<AnimateRectTransform>();
         animator.Configure(new Vector2(0, -GetComponent<RectTransform>().rect.height), Quaternion.identity, 1.0f, curve);
         
-        animator.OnComplete += HideTexture;
+        //animator.OnComplete += HideTexture;
     }
 
     //function that takes a texture and displays it on the screen
@@ -57,7 +57,6 @@ public class ARAnnotationDisplay : MonoBehaviour
         if (animator != null){
             Debug.Log("Removing hidetexture oncomplete from animator");
             animator.OnComplete -= HideTexture;
-            Destroy(animator);
         }
     }
 
