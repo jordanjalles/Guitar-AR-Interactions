@@ -27,7 +27,7 @@ public class AnimateTransform : MonoBehaviour
         //if this gameobject currently has a another AnimateTransform, cancel it
         foreach (AnimateTransform anim in GetComponents<AnimateTransform>()){
             if (anim != this){
-                Destroy(anim);
+                anim.Complete();
                 Debug.Log("Canceled other animation");
             }
         }
@@ -41,14 +41,18 @@ public class AnimateTransform : MonoBehaviour
         this.fromRot = transform.rotation;
     }
 
+    public void Complete(){
+        OnComplete();
+        Destroy(this);
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (Time.time - startTime > duration){
             transform.position = targetPos;
             transform.rotation = targetRot;
-            OnComplete();
-            Destroy(this);
+            Complete();
         }
         else
         {  

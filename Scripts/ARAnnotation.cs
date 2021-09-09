@@ -80,18 +80,20 @@ public class ARAnnotation : MonoBehaviour
         
     }
 
-    public void Hint(){        
+    public void Hint(){     
+        DeactivateDetailDisplay();   
         state = State.hint;
         annotationHint.SetActive(true);
         annotationMarker.SetActive(false);
-        DeactivateDetailDisplay();
+        
     }
 
     public void Hide(){      
+        DeactivateDetailDisplay();
         state = State.hidden;
         annotationHint.SetActive(false);
         annotationMarker.SetActive(false);
-        DeactivateDetailDisplay();
+        
     }
 
     public void Activate(){
@@ -111,15 +113,18 @@ public class ARAnnotation : MonoBehaviour
         annotationHint.SetActive(false);        
         annotationMarker.SetActive(true);
 
+
         //i.e. activate display
         ARAnnotation.focusedAnnotation = this;
         annotationDisplay.DisplayTexture(annotationDetailTexture);
+        annotationDisplay.AnimateIn();
     }
 
     public void DeactivateDetailDisplay(){
-        if (ARAnnotation.focusedAnnotation == this){
-            Debug.Log("hiding annotation detail");
-            annotationDisplay.HideTexture();
+
+        if (ARAnnotation.focusedAnnotation == this && state == State.active){
+            Debug.Log("deactivate detail display");
+            annotationDisplay.AnimateOut();
         }
     }
 

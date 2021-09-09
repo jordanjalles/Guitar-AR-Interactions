@@ -43,6 +43,7 @@ public class ARSelectionController : MonoBehaviour
 
     private void OnTouchBegan(Vector2 tapPosition)
     {
+        //todo: rewrite this as a state machine
         lastTouchPosition = tapPosition;
 
         Ray ray = arCamera.ScreenPointToRay(tapPosition);
@@ -67,6 +68,7 @@ public class ARSelectionController : MonoBehaviour
     }
 
     private void OnTouchEnded(Vector2 tapPosition){
+        //todo: rewrite this as a state machine
         lastTouchPosition = tapPosition;
 
         Ray ray = arCamera.ScreenPointToRay(tapPosition);
@@ -176,7 +178,7 @@ public class ARSelectionController : MonoBehaviour
             animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
             
             //might use this to change selected item parent to the camera, and back to the previous parent on deselect
-            animator.OnComplete = () => {Debug.Log("Delegate function called!");};
+            //animator.OnComplete = () => {Debug.Log("Animator delegate function called");};
             
             PlaySelectedItemAudio();
         }
