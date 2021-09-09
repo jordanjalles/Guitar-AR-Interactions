@@ -10,12 +10,12 @@ public class ARAnnotationDisplay : MonoBehaviour
         gameObject.active = true;
         //set the image sprite to the texture passed in
         GetComponent<Image>().sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-        GetComponent<Image>().SetNativeSize();
+        
+        float textureToScreenScaleFactor = Camera.main.pixelWidth*1.0f/texture.width; //1.0f converts this to a float calc
 
         //set the rect transform to the bottom of the screen
         RectTransform rectTransform = GetComponent<RectTransform>();
-        //rectTransform.anchoredPosition = new Vector2(texture.width/2, texture.height/2);
-        rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, Camera.main.pixelWidth/texture.width*texture.height);
+        rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 0, textureToScreenScaleFactor*texture.height);
         rectTransform.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 0, Camera.main.pixelWidth);
     }
 

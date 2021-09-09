@@ -73,22 +73,22 @@ public class ARSelectionController : MonoBehaviour
         RaycastHit hitObject;
         if(Physics.Raycast(ray, out hitObject))
         {
-            //if the touch began and ended on a guitar, select it 
-            if(selectables.Contains(hitObject.transform) && interactionState == InteractionState.touchingNew)
+            if(selectables.Contains(hitObject.transform))
             {
-                if (selectables.IndexOf(hitObject.transform) == newSelectableTouchedIndex) 
+                if (selectables.IndexOf(hitObject.transform) == newSelectableTouchedIndex  && interactionState == InteractionState.touchingNew) 
                 {
                     SelectItem(newSelectableTouchedIndex);
                 }
-            }
-        }else{
-            //if the touch began and ended on empty space, deselect the previously selected guitar
-            if (interactionState == InteractionState.touchingEmpty && itemSelected)
+            }else if(interactionState == InteractionState.touchingEmpty && itemSelected)
             {
-                //deselect selected guitar
                 DeselectItem(selectedIndex);
             }
         }
+        else if (interactionState == InteractionState.touchingEmpty && itemSelected)
+        {
+            DeselectItem(selectedIndex);
+        }
+        
 
         interactionState = InteractionState.notTouching;
     }
