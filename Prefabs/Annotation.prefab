@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8513106098122294863}
   - component: {fileID: 8513106098122294860}
   - component: {fileID: -1762023017881566207}
+  - component: {fileID: 8467560478091533771}
   m_Layer: 0
   m_Name: Annotation
   m_TagString: Untagged
@@ -45,12 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxVisibilityDistance: 2
-  maxActivationDistance: 1
+  maxFocusDistance: 0.5
   annotationHint: {fileID: 2863291284765708369, guid: 6bb26b02547914eaf958de8716f896ca,
     type: 3}
   annotationMarker: {fileID: 2846613011585325368, guid: 55de685f23d7d439fab7a7d86c2d3bef,
     type: 3}
-  annotationDetail: {fileID: 0}
+  annotationDetailTexture: {fileID: 0}
 --- !u!114 &-1762023017881566207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,3 +64,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c47f4af4bc04d4a72afa72743629b47e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!135 &8467560478091533771
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8513106098122294861}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.02
+  m_Center: {x: 0, y: 0, z: 0}

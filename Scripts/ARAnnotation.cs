@@ -12,7 +12,7 @@ public class ARAnnotation : MonoBehaviour
     private float maxVisibilityDistance;
     [SerializeField]
 
-    private float maxActivationDistance;
+    public float maxFocusDistance;
 
     [SerializeField]
     private GameObject annotationHint;
@@ -30,7 +30,7 @@ public class ARAnnotation : MonoBehaviour
     private ARAnnotationDisplay annotationDisplay;
 
     //state enums
-    enum State {hidden, active, hint};
+    enum State {hidden, focused, hint};
     State state;
 
     void Awake()
@@ -58,16 +58,16 @@ public class ARAnnotation : MonoBehaviour
         }
 
         else if (state == State.hint){
-            if (distance < maxActivationDistance){
-                Activate();
+            if (distance < maxFocusDistance){
+                Focus();
             }
             if (distance > maxVisibilityDistance){
                 Hide();
             }
         }
 
-        else if (state == State.active){
-            if (distance > maxActivationDistance){
+        else if (state == State.focused){
+            if (distance > maxFocusDistance){
                 Hint();
             }
             if (distance > maxVisibilityDistance){
@@ -81,7 +81,7 @@ public class ARAnnotation : MonoBehaviour
     }
 
     public void Hint(){     
-        DeactivateDetailDisplay();   
+        DeFocusDetailDisplay();   
         state = State.hint;
         annotationHint.SetActive(true);
         annotationMarker.SetActive(false);
@@ -89,14 +89,14 @@ public class ARAnnotation : MonoBehaviour
     }
 
     public void Hide(){      
-        DeactivateDetailDisplay();
+        DeFocusDetailDisplay();
         state = State.hidden;
         annotationHint.SetActive(false);
         annotationMarker.SetActive(false);
         
     }
 
-    public void Activate(){
+    public void Focus(){
         //if there is a closer annotation, switch ack to hint and return
         if (ARAnnotation.focusedAnnotation != null){
             float myDistance = Vector3.Distance(m_Camera.transform.position, transform.position);
@@ -108,22 +108,21 @@ public class ARAnnotation : MonoBehaviour
             }
         }
 
-        state = State.active;
+        state = State.focused;
         
         annotationHint.SetActive(false);        
         annotationMarker.SetActive(true);
 
 
-        //i.e. activate display
+        //i.e. Focus display
         ARAnnotation.focusedAnnotation = this;
         annotationDisplay.DisplayTexture(annotationDetailTexture);
         annotationDisplay.AnimateIn();
     }
 
-    public void DeactivateDetailDisplay(){
-
-        if (ARAnnotation.focusedAnnotation == this && state == State.active){
-            Debug.Log("deactivate detail display");
+    public void DeFocusDetailDisplay(){
+        if (ARAnnotation.focusedAnnotation == this && state == State.focused){
+            Debug.Log("deFocus detail display");
             annotationDisplay.AnimateOut();
         }
     }
@@ -133,6 +132,16 @@ public class ARAnnotation : MonoBehaviour
         return (myDistance < yourDistance);
     }
 
-
+    //checks if the most recently focused annotation is in focused
+    public static bool IsFocused(){
+        if (focusedAnnotation != null){
+            if (focusedAnnotation.state == State.focused){
+                Debug.Log("AR annotation is focused");
+                return true;
+            }
+        }
+        Debug.Log("AR annotation is NOT focused");
+        return false;
+    }
 
 }

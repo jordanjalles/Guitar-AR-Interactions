@@ -8,12 +8,14 @@ public class ARSelectable : MonoBehaviour
     
     public Vector3 homePosition;
     public Vector3 homeRotation;
+    public Transform homeParent;
     
     // Start is called before the first frame update
     void Start()
     {
         this.homePosition = this.transform.position;
         this.homeRotation = this.transform.rotation.eulerAngles;
+        this.homeParent = this.transform.parent;
         Deselect();
     }
 

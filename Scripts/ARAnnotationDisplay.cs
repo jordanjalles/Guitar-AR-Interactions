@@ -7,7 +7,10 @@ using UnityEngine.UI;
 public class ARAnnotationDisplay : MonoBehaviour
 {
     [SerializeField]
-    private AnimationCurve curve;
+    private AnimationCurve animationCurveIn;
+    
+    [SerializeField]
+    private AnimationCurve animationCurveOut;
 
     public void AnimateIn(){
         Debug.Log("AnimateIn");
@@ -18,13 +21,13 @@ public class ARAnnotationDisplay : MonoBehaviour
 
         //animate to the bottom edge of the screen over 0.5 seconds
         AnimateRectTransform animator = gameObject.AddComponent<AnimateRectTransform>();
-        animator.Configure(Vector2.zero, Quaternion.identity, 0.5f, curve);
+        animator.Configure(Vector2.zero, Quaternion.identity, 0.5f, animationCurveIn);
     }
 
     public void AnimateOut(){
         Debug.Log("AnimateOut");
         AnimateRectTransform animator = gameObject.AddComponent<AnimateRectTransform>();
-        animator.Configure(new Vector2(0, -GetComponent<RectTransform>().rect.height), Quaternion.identity, 1.0f, curve);
+        animator.Configure(new Vector2(0, -GetComponent<RectTransform>().rect.height), Quaternion.identity, 0.5f, animationCurveOut);
         
         //animator.OnComplete += HideTexture;
     }

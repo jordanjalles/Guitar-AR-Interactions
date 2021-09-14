@@ -23,7 +23,7 @@ public class ARSelectionController : MonoBehaviour
     private float lastTwoFingerAngle;
     private Vector2 lastTwoFingerAveragePosition;
 
-    enum InteractionState { touchingNew, grabbingSelected, touchingEmpty, notTouching, twoFingersTouching};
+    enum InteractionState { touchingNew, grabbingSelected, touchingEmpty, notTouching, twoFingersTouching, touchingAnnotation};
     private InteractionState interactionState = InteractionState.notTouching;
 
     private void Awake()
@@ -59,6 +59,8 @@ public class ARSelectionController : MonoBehaviour
                 {
                     interactionState = InteractionState.touchingNew;
                 }
+            }else if (hitObject.transform.GetComponent<ARAnnotation>() != null){
+                interactionState = InteractionState.touchingAnnotation;
             }else{
                 interactionState = InteractionState.touchingEmpty;
             }
@@ -81,14 +83,27 @@ public class ARSelectionController : MonoBehaviour
                 {
                     SelectItem(newSelectableTouchedIndex);
                 }
-            }else if(interactionState == InteractionState.touchingEmpty && itemSelected)
+            }
+            else if(interactionState == InteractionState.touchingAnnotation && hitObject.transform.GetComponent<ARAnnotation>() != null)
             {
-                DeselectItem(selectedIndex);
+                MoveSelectedItemToAnnotationView(hitObject.transform.GetComponent<ARAnnotation>());
+            }
+            else if(interactionState == InteractionState.touchingEmpty && itemSelected)
+            {
+                if (ARAnnotation.IsFocused()){
+                    MoveSelectedItemToCameraView();
+                }else{
+                    DeselectItem(selectedIndex);
+                }
             }
         }
         else if (interactionState == InteractionState.touchingEmpty && itemSelected)
         {
-            DeselectItem(selectedIndex);
+            if (ARAnnotation.IsFocused()){
+                MoveSelectedItemToCameraView();
+            }else{
+                DeselectItem(selectedIndex);
+            }
         }
         
 
@@ -166,20 +181,7 @@ public class ARSelectionController : MonoBehaviour
             ARSelectable selectedItem = selectables[selectedIndex].GetComponent<ARSelectable>();
             selectedItem.Select();
             
-            //move the selected guitar location to 0.75 meter in front of the camera
-            selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 0.75f);
-            //rotate it to look at the camera...had to flip the rotation because of the guitar's rotation
-            selectedTargetLocation.LookAt(arCamera.transform.position); 
-            selectedTargetLocation.Rotate(Vector3.up, 180);
-
-            Transform itemBody = selectedItem.transform;
-
-            AnimateTransform animator = itemBody.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
-            animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
-            
-            //might use this to change selected item parent to the camera, and back to the previous parent on deselect
-            //animator.OnComplete = () => {Debug.Log("Animator delegate function called");};
-            
+            MoveSelectedItemToCameraView();
             PlaySelectedItemAudio();
         }
 
@@ -197,8 +199,49 @@ public class ARSelectionController : MonoBehaviour
         ARSelectable selectedItem = selectables[selectedIndex].GetComponent<ARSelectable>();
         selectedItem.Deselect();
 
+        selectedItem.transform.parent = selectedItem.homeParent;
+
         AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
         animator.Configure (selectedItem.homePosition, selectedItem.homeRotation, 1f, curveForTransitions);
+    }
+
+    private void MoveSelectedItemToAnnotationView(ARAnnotation annotation){
+        Transform selectedItem = selectables[selectedIndex];
+
+
+        //move the target location to 1 meter in front of the camera
+        selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1f);
+        //rotate it to look at the camera...had to flip the rotation because of the guitar's rotation
+        selectedTargetLocation.LookAt(arCamera.transform.position); 
+        selectedTargetLocation.Rotate(Vector3.up, 180);
+
+
+        //move the target location to within the annotation focus distance - in front of the camera
+        selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * annotation.maxFocusDistance * 0.9f) ;
+        //adjust for the annotation's position relative to the item
+        selectedTargetLocation.position += selectedTargetLocation.TransformDirection(selectedItem.InverseTransformDirection(selectedItem.position - annotation.transform.position)) ;
+
+        
+
+        AnimateTransform animator = selectedItem.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the focused location
+        animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
+    }
+
+    private void MoveSelectedItemToCameraView(){
+        Transform selectedItem = selectables[selectedIndex];
+
+        //move the selected guitar location to 1 meter in front of the camera
+        selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1f);
+        //rotate it to look at the camera...had to flip the rotation because of the guitar's rotation
+        selectedTargetLocation.LookAt(arCamera.transform.position); 
+        selectedTargetLocation.Rotate(Vector3.up, 180);
+
+        Transform itemBody = selectedItem.transform;
+
+        AnimateTransform animator = itemBody.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
+        animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
+        animator.OnComplete += () => {itemBody.parent = Camera.main.transform;}; //when the animation is complete, parent the guitar body to the camera
+        
     }
 
     private void SwipeAction_OnSwipe(SwipeData data)
