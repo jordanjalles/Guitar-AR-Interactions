@@ -224,7 +224,7 @@ public class ARSelectionController : MonoBehaviour
         //move the target location to within the annotation focus distance - in front of the camera
         selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * annotation.maxFocusDistance * 0.9f) ;
         //adjust for the annotation's position relative to the item
-        selectedTargetLocation.position += selectedTargetLocation.TransformPoint(selectedItem.InverseTransformPoint(selectedItem.position - annotation.transform.position));
+        selectedTargetLocation.position += selectedTargetLocation.TransformDirection(selectedItem.InverseTransformDirection(selectedItem.position - annotation.transform.position));
 
         AnimateTransform animator = selectedItem.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the focused location
         animator.Configure(selectedTargetLocation, 1f, curveForTransitions);
