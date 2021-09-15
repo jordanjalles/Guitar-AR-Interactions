@@ -201,8 +201,13 @@ public class ARSelectionController : MonoBehaviour
 
         selectedItem.transform.parent = selectedItem.homeParent;
 
+        Transform homeTarget = new GameObject("homeTarget").transform;
+        homeTarget.position = selectedItem.homePosition;
+        homeTarget.rotation = Quaternion.Euler(selectedItem.homeRotation);
+
         AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
-        animator.Configure (selectedItem.homePosition, selectedItem.homeRotation, 1f, curveForTransitions);
+        animator.Configure (homeTarget, 1f, curveForTransitions);
+        animator.OnComplete += () => {Destroy(homeTarget.gameObject);};
     }
 
     private void MoveSelectedItemToAnnotationView(ARAnnotation annotation){
@@ -219,12 +224,10 @@ public class ARSelectionController : MonoBehaviour
         //move the target location to within the annotation focus distance - in front of the camera
         selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * annotation.maxFocusDistance * 0.9f) ;
         //adjust for the annotation's position relative to the item
-        selectedTargetLocation.position += selectedTargetLocation.TransformDirection(selectedItem.InverseTransformDirection(selectedItem.position - annotation.transform.position)) ;
-
-        
+        selectedTargetLocation.position += selectedTargetLocation.TransformPoint(selectedItem.InverseTransformPoint(selectedItem.position - annotation.transform.position));
 
         AnimateTransform animator = selectedItem.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the focused location
-        animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
+        animator.Configure(selectedTargetLocation, 1f, curveForTransitions);
     }
 
     private void MoveSelectedItemToCameraView(){
@@ -239,7 +242,7 @@ public class ARSelectionController : MonoBehaviour
         Transform itemBody = selectedItem.transform;
 
         AnimateTransform animator = itemBody.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
-        animator.Configure(selectedTargetLocation.position, selectedTargetLocation.rotation.eulerAngles, 1f, curveForTransitions);
+        animator.Configure(selectedTargetLocation, 1f, curveForTransitions);
         animator.OnComplete += () => {itemBody.parent = Camera.main.transform;}; //when the animation is complete, parent the guitar body to the camera
         
     }

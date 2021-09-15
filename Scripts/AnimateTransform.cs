@@ -7,6 +7,7 @@ public class AnimateTransform : MonoBehaviour
 
     private Vector3 targetPos;
     private Quaternion targetRot;
+    private Transform targetTransform;
 
     private Vector3 fromPos;
     private Quaternion fromRot;
@@ -18,10 +19,9 @@ public class AnimateTransform : MonoBehaviour
 
     
 
-    public void Configure(Vector3 targetPosition, Vector3 targetRotation, float duration, AnimationCurve curve){
+    public void Configure(Transform targetTransform, float duration, AnimationCurve curve){
         this.curve = curve;
-        this.targetPos = targetPosition;
-        this.targetRot = Quaternion.Euler(targetRotation);
+        this.targetTransform = targetTransform;
         this.duration = duration;
 
         //if this gameobject currently has a another AnimateTransform, cancel it
@@ -50,15 +50,15 @@ public class AnimateTransform : MonoBehaviour
     void Update()
     {
         if (Time.time - startTime > duration){
-            transform.position = targetPos;
-            transform.rotation = targetRot;
+            transform.position = targetTransform.position;
+            transform.rotation = targetTransform.rotation;
             Complete();
         }
         else
         {  
             float percentage = curve.Evaluate((Time.time - startTime)/duration);
-            transform.position = Vector3.Lerp(fromPos, targetPos, percentage);
-            transform.rotation = Quaternion.Slerp(fromRot, targetRot, percentage);
+            transform.position = Vector3.Lerp(fromPos, targetTransform.position, percentage);
+            transform.rotation = Quaternion.Slerp(fromRot, targetTransform.rotation, percentage);
         }
     }
 
