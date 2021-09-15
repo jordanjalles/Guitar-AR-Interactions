@@ -217,8 +217,8 @@ public class ARSelectionController : MonoBehaviour
         //move the target location to 1 meter in front of the camera
         selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1f);
         //rotate it to look at the camera...had to flip the rotation because of the guitar's rotation
-        selectedTargetLocation.LookAt(arCamera.transform.position); 
-        selectedTargetLocation.Rotate(Vector3.up, 180);
+        selectedTargetLocation.LookAt(arCamera.transform.position, arCamera.transform.up);); 
+        selectedTargetLocation.Rotate(arCamera.transform.up, 180);
 
 
         //move the target location to within the annotation focus distance - in front of the camera
@@ -236,8 +236,8 @@ public class ARSelectionController : MonoBehaviour
         //move the selected guitar location to 1 meter in front of the camera
         selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1f);
         //rotate it to look at the camera...had to flip the rotation because of the guitar's rotation
-        selectedTargetLocation.LookAt(arCamera.transform.position); 
-        selectedTargetLocation.Rotate(Vector3.up, 180);
+        selectedTargetLocation.LookAt(arCamera.transform.position, arCamera.transform.up);); 
+        selectedTargetLocation.Rotate(arCamera.transform.up, 180);
 
         Transform itemBody = selectedItem.transform;
 
