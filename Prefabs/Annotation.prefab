@@ -47,11 +47,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxVisibilityDistance: 2
   maxFocusDistance: 0.5
-  annotationHint: {fileID: 2863291284765708369, guid: 6bb26b02547914eaf958de8716f896ca,
+  basicHintPrefab: {fileID: 2863291284765708369, guid: 6bb26b02547914eaf958de8716f896ca,
     type: 3}
-  annotationMarker: {fileID: 2846613011585325368, guid: 55de685f23d7d439fab7a7d86c2d3bef,
+  basicActivePrefab: {fileID: 2846613011585325368, guid: 55de685f23d7d439fab7a7d86c2d3bef,
     type: 3}
+  commentHintPrefab: {fileID: 2846613011585325368, guid: 6cf439694c6514496bc96bd023426a75,
+    type: 3}
+  commentActivePrefab: {fileID: 2846613011585325368, guid: 24a12ff1c87974de6a4cad2be2647dad,
+    type: 3}
+  videoHintPrefab: {fileID: 2846613011585325368, guid: 92991ba5801ff4277b0ccdef76487a5c,
+    type: 3}
+  videoActivePrefab: {fileID: 2846613011585325368, guid: 7296f689a334b446da181ed2fe3466cf,
+    type: 3}
+  recommendedCameraRotation: {x: 0, y: 0, z: 0}
   annotationDetailTexture: {fileID: 0}
+  annotationType: 0
 --- !u!114 &-1762023017881566207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,5 +85,5 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.02
+  m_Radius: 0.03
   m_Center: {x: 0, y: 0, z: 0}

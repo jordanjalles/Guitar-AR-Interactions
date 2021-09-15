@@ -15,11 +15,24 @@ public class ARAnnotation : MonoBehaviour
     public float maxFocusDistance;
 
     [SerializeField]
-    private GameObject annotationHint;
-
-    //annotation marker
+    private GameObject basicHintPrefab;
     [SerializeField]
+    private GameObject basicActivePrefab;
+    [SerializeField]
+    private GameObject commentHintPrefab;
+    [SerializeField]
+    private GameObject commentActivePrefab;
+    [SerializeField]
+    private GameObject videoHintPrefab;
+    [SerializeField]
+    private GameObject videoActivePrefab;
+
+    public Vector3 recommendedCameraRotation = Vector3.zero;
+    
+    
+
     private GameObject annotationMarker;
+    private GameObject annotationHint;
 
     [SerializeField]
     private Texture2D annotationDetailTexture;
@@ -29,6 +42,12 @@ public class ARAnnotation : MonoBehaviour
 
     private ARAnnotationDisplay annotationDisplay;
 
+    //enum for types of annotations: basic, comment, video
+    public enum AnnotationType { Basic, Comment, Video };
+
+    public AnnotationType annotationType;
+
+
     //state enums
     enum State {hidden, focused, hint};
     State state;
@@ -37,8 +56,22 @@ public class ARAnnotation : MonoBehaviour
     {
         m_Camera = Camera.main;
         //instantiate the annotation game objects
-        annotationMarker = Instantiate(annotationMarker, transform.position,  Quaternion.identity, transform);
-        annotationHint = Instantiate(annotationHint, transform.position, Quaternion.identity, transform);
+        //if type is basic, instantiate basic prefabs
+        //if type is comment, instantiate comment prefabs
+        //if type is video, instantiate video prefabs
+        if (annotationType == AnnotationType.Basic){
+            annotationMarker = Instantiate(basicActivePrefab, transform.position,  Quaternion.identity, transform);
+            annotationHint = Instantiate(basicHintPrefab, transform.position, Quaternion.identity, transform);
+        }
+        else if (annotationType == AnnotationType.Comment){
+            annotationMarker = Instantiate(commentActivePrefab, transform.position,  Quaternion.identity, transform);
+            annotationHint = Instantiate(commentHintPrefab, transform.position, Quaternion.identity, transform);
+        }
+        else if (annotationType == AnnotationType.Video){
+            annotationMarker = Instantiate(videoActivePrefab, transform.position,  Quaternion.identity, transform);
+            annotationHint = Instantiate(videoHintPrefab, transform.position, Quaternion.identity, transform);
+        }
+        
         annotationDisplay = FindObjectsOfType<ARAnnotationDisplay>(includeInactive: true)[0];
         
 
