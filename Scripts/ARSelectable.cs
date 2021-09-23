@@ -9,6 +9,7 @@ public class ARSelectable : MonoBehaviour
     public Vector3 homePosition;
     public Vector3 homeRotation;
     public Transform homeParent;
+    public Color backgroundColor;
     
     // Start is called before the first frame update
     void Start()
@@ -33,10 +34,18 @@ public class ARSelectable : MonoBehaviour
         this.isSelected = false;
         //Debug.Log("Deselecting " + this.name);
         //turn off annotations
+
         foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>()){
             //Debug.Log("Deactivating " + a.name);
             a.Hide(); //calling hide so that it removes any detail display that may be active
             a.gameObject.SetActive(false);
         }
     }
+
+    public void ChangeToLayer(string layerName){
+        foreach (Transform child in GetComponentsInChildren<Transform>(includeInactive : true)){
+            child.gameObject.layer = LayerMask.NameToLayer(layerName);
+        }
+    }
+
 }

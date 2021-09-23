@@ -23,6 +23,8 @@ public class ARSelectionController : MonoBehaviour
     private float lastTwoFingerAngle;
     private Vector2 lastTwoFingerAveragePosition;
 
+    public SelectedItemBackground selectedItemBackground;
+
     enum InteractionState { touchingNew, grabbingSelected, touchingEmpty, notTouching, twoFingersTouching, touchingAnnotation};
     private InteractionState interactionState = InteractionState.notTouching;
 
@@ -39,6 +41,7 @@ public class ARSelectionController : MonoBehaviour
             selectables.Add(child.transform);
             Debug.Log("Selectable found: " + child.name);
         }
+
     }
 
     private void OnTouchBegan(Vector2 tapPosition)
@@ -183,6 +186,15 @@ public class ARSelectionController : MonoBehaviour
             
             MoveSelectedItemToCameraView();
             PlaySelectedItemAudio();
+
+            if (selectedItem.backgroundColor != null){
+                selectedItemBackground.selectedColor = selectedItem.backgroundColor;
+            }
+            
+            selectedItemBackground.OnItemSelected();
+            
+
+            selectedItem.ChangeToLayer("OnTop");
         }
 
     }
@@ -208,6 +220,9 @@ public class ARSelectionController : MonoBehaviour
         AnimateTransform animator = selectables[selectedIndex].gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
         animator.Configure (homeTarget, 1f, curveForTransitions);
         animator.OnComplete += () => {Destroy(homeTarget.gameObject);};
+        animator.OnComplete += () => {selectedItem.ChangeToLayer("Default");};
+        selectedItemBackground.OnItemDeselected();
+
     }
 
     private void MoveSelectedItemToAnnotationView(ARAnnotation annotation){
@@ -241,7 +256,7 @@ public class ARSelectionController : MonoBehaviour
         Transform selectedItem = selectables[selectedIndex];
 
         //move the selected guitar location to 1 meter in front of the camera
-        selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1f);
+        selectedTargetLocation.position = arCamera.transform.position + (arCamera.transform.forward * 1.2f);
         //rotate it to look at the camera.
         selectedTargetLocation.rotation = arCamera.transform.rotation;
 

@@ -64,17 +64,15 @@ public class ARAnnotation : MonoBehaviour
             annotationHint = Instantiate(basicHintPrefab, transform.position, Quaternion.identity, transform);
         }
         else if (annotationType == AnnotationType.Comment){
-            annotationMarker = Instantiate(commentActivePrefab, transform.position,  Quaternion.identity, transform);
+            annotationMarker = Instantiate(commentActivePrefab, transform.position, Quaternion.identity, transform);
             annotationHint = Instantiate(commentHintPrefab, transform.position, Quaternion.identity, transform);
         }
         else if (annotationType == AnnotationType.Video){
-            annotationMarker = Instantiate(videoActivePrefab, transform.position,  Quaternion.identity, transform);
+            annotationMarker = Instantiate(videoActivePrefab, transform.position, Quaternion.identity, transform);
             annotationHint = Instantiate(videoHintPrefab, transform.position, Quaternion.identity, transform);
         }
-        
-        annotationDisplay = FindObjectsOfType<ARAnnotationDisplay>(includeInactive: true)[0];
-        
 
+        annotationDisplay = FindObjectsOfType<ARAnnotationDisplay>(includeInactive: true)[0];
     }
 
     void Update()
@@ -114,15 +112,19 @@ public class ARAnnotation : MonoBehaviour
     }
 
     public void Hint(){     
-        DeFocusDetailDisplay();   
+        if (ARAnnotation.focusedAnnotation == this){
+            DeFocusDetailDisplay(); 
+        }  
         state = State.hint;
         annotationHint.SetActive(true);
         annotationMarker.SetActive(false);
         
     }
 
-    public void Hide(){      
-        DeFocusDetailDisplay();
+    public void Hide(){     
+        if (ARAnnotation.focusedAnnotation == this){
+            DeFocusDetailDisplay(); 
+        }
         state = State.hidden;
         annotationHint.SetActive(false);
         annotationMarker.SetActive(false);
