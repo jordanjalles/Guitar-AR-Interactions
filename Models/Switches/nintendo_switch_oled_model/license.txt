@@ -1,0 +1,11 @@
+Model Information:
+* title:	Nintendo Switch (OLED model)
+* source:	https://sketchfab.com/3d-models/nintendo-switch-oled-model-9b8721e10a4f4a689fc4f72cdcee4b01
+* author:	rtql8d (https://sketchfab.com/rtql8d)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Nintendo Switch (OLED model)" (https://sketchfab.com/3d-models/nintendo-switch-oled-model-9b8721e10a4f4a689fc4f72cdcee4b01) by rtql8d (https://sketchfab.com/rtql8d) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
