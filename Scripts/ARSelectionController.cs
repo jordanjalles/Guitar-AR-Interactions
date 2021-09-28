@@ -58,15 +58,19 @@ public class ARSelectionController : MonoBehaviour
                 if (selectedIndex == newSelectableTouchedIndex && itemSelected)
                 {
                     interactionState = InteractionState.grabbingSelected;
-                }else
+                }
+                else if (!itemSelected)
                 {
                     interactionState = InteractionState.touchingNew;
+                }
+                else{
+                    interactionState = InteractionState.touchingEmpty;
                 }
             }else if (hitObject.transform.GetComponent<ARAnnotation>() != null){
                 interactionState = InteractionState.touchingAnnotation;
             }else{
                 interactionState = InteractionState.touchingEmpty;
-            }
+            }   
         }else{
             interactionState = InteractionState.touchingEmpty;
         }
@@ -80,9 +84,9 @@ public class ARSelectionController : MonoBehaviour
         RaycastHit hitObject;
         if(Physics.Raycast(ray, out hitObject))
         {
-            if(selectables.Contains(hitObject.transform))
+            if(selectables.Contains(hitObject.transform) && !itemSelected)
             {
-                if (selectables.IndexOf(hitObject.transform) == newSelectableTouchedIndex  && interactionState == InteractionState.touchingNew) 
+                if (selectables.IndexOf(hitObject.transform) == newSelectableTouchedIndex  && interactionState == InteractionState.touchingNew ) 
                 {
                     SelectItem(newSelectableTouchedIndex);
                 }

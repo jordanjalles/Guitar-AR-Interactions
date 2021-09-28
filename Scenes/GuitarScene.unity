@@ -1628,7 +1628,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
-  backgroundColor: {r: 0.26415092, g: 0.18790562, b: 0.12584549, a: 0.95686275}
+  backgroundColor: {r: 0.3018868, g: 0.23463356, b: 0.17799929, a: 0.90588236}
 --- !u!65 &518433234
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2494,7 +2494,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
-  backgroundColor: {r: 0.13314347, g: 0.13436173, b: 0.1509434, a: 0.95686275}
+  backgroundColor: {r: 0.13314347, g: 0.13436173, b: 0.1509434, a: 1}
 --- !u!65 &1194721506
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3318,7 +3318,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
-  backgroundColor: {r: 1, g: 1, b: 1, a: 0.95686275}
+  backgroundColor: {r: 0.9528302, g: 0.91237986, b: 0.91237986, a: 1}
 --- !u!65 &1451145243
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4346,7 +4346,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
-  backgroundColor: {r: 1, g: 0.4198113, b: 0.54349655, a: 0.95686275}
+  backgroundColor: {r: 0.9528302, g: 0.35506406, b: 0.48431072, a: 1}
 --- !u!65 &1980159963
 BoxCollider:
   m_ObjectHideFlags: 0
