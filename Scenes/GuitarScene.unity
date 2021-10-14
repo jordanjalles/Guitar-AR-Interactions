@@ -1628,7 +1628,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
-  backgroundColor: {r: 0.3018868, g: 0.23463356, b: 0.17799929, a: 0.90588236}
+  backgroundColor: {r: 0.3018868, g: 0.23463356, b: 0.17799929, a: 1}
 --- !u!65 &518433234
 BoxCollider:
   m_ObjectHideFlags: 0

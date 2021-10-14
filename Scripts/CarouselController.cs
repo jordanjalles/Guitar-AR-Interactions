@@ -52,7 +52,7 @@ public class CarouselController : MonoBehaviour
 
     private void UpdateCarouselItemTransforms(int centerIndex){
         for (int i = 0; i < items.Count; i++){
-            Transform targetTransform = new GameObject().transform;
+            Transform targetTransform = new GameObject("Animation target transform").transform;
             Vector3 targetPosition = Vector3.zero;
             targetPosition.x = selectedTargetLocation.position.x + itemOffsetPositionPerIndex.x * (i - centerIndex);
             targetPosition.y = selectedTargetLocation.position.y + itemOffsetPositionPerIndex.y * Mathf.Abs(i - centerIndex);
@@ -81,11 +81,11 @@ public class CarouselController : MonoBehaviour
     private void SwipeAction_OnSwipe(SwipeData data)
     {
         if (data.Direction == SwipeDirection.Left){
-            centerIndex = (centerIndex + 1) % items.Count;
+            centerIndex = Mathf.Min(centerIndex + 1, items.Count - 1);
             UpdateCarouselItemTransforms(centerIndex);
         }
         else if (data.Direction == SwipeDirection.Right){
-            centerIndex = (centerIndex - 1) % items.Count;
+            centerIndex = Mathf.Max(centerIndex - 1, 0);
             UpdateCarouselItemTransforms(centerIndex);
         }
         
