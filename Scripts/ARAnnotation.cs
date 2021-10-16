@@ -75,6 +75,10 @@ public class ARAnnotation : MonoBehaviour
         annotationDisplay = FindObjectsOfType<ARAnnotationDisplay>(includeInactive: true)[0];
     }
 
+    //todo
+    //add interaction triggers on enable
+    //remove interaction triggers on disable
+
     void Update()
     {
         //check the distance between the camera and the object

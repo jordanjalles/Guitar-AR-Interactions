@@ -269,7 +269,6 @@ public class ARSelectionController : MonoBehaviour
         AnimateTransform animator = itemBody.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
         animator.Configure(selectedTargetLocation, 1f, curveForTransitions);
         animator.OnComplete += () => {itemBody.parent = Camera.main.transform;}; //when the animation is complete, parent the guitar body to the camera
-        
     }
 
     private void SwipeAction_OnSwipe(SwipeData data)
