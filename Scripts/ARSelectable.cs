@@ -111,6 +111,7 @@ public class ARSelectable : MonoBehaviour
         InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
         trigger.interactionType = InteractionTrigger.InteractionType.Tap;
         trigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
+        trigger.name = "Tap to select";
         trigger.OnTap += () => { Select(); };
     }
 
@@ -119,6 +120,7 @@ public class ARSelectable : MonoBehaviour
         InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
         trigger.interactionType = InteractionTrigger.InteractionType.Tap;
         trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
+        trigger.name = "Tap to reset selected view";
         trigger.OnTap += () => { 
             MoveToCameraView();
             SetUpSelectedInteractions();
@@ -147,6 +149,7 @@ public class ARSelectable : MonoBehaviour
         dragTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
         dragTrigger.OnDrag += (input) => {rotateY.Activate(input.x);};
         dragTrigger.OnDrag += (input) => {rotateX.Activate(input.y);};
+        dragTrigger.name = "Drag to rotate";
     }
 
     public void AddPinchToZoom(){
@@ -161,6 +164,7 @@ public class ARSelectable : MonoBehaviour
         pinchTrigger.interactionType = InteractionTrigger.InteractionType.Pinch;
         pinchTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Any;
         pinchTrigger.OnPinch += (input) => {zoom.Activate(input);};
+        pinchTrigger.name = "Pinch to zoom";
     }
 
     public void AddTapNotSelfToDeselect(){
@@ -168,6 +172,7 @@ public class ARSelectable : MonoBehaviour
         InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
         trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
         trigger.OnTap += Deselect;
+        trigger.name = "Deselect";
     }
 
     public void RemoveTriggersAndActions(){

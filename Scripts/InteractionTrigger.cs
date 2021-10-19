@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class InteractionTrigger : MonoBehaviour
 {
+    [SerializeField]
+    public string name = "default";
+
     //type of interaction that will trigger 
-    public enum InteractionType {Tap, Drag, DragTwo, Rotate, Pinch, Swipe};
+    public enum InteractionType {Tap, Drag, DragTwo, DragX, DragY, DragTwoX, DragTwoY, Rotate, Pinch, Swipe};
     //defaults to tap
     public InteractionType interactionType = InteractionType.Tap;
     
@@ -41,10 +44,13 @@ public class InteractionTrigger : MonoBehaviour
             //SwipeDetector.OnSwipe += OnSwipe;
         }
         mainCamera = Camera.main;
+
+        if (linkedAction != null){
+            SetUpLinkedAction();
+        }
     }
 
     private void OnDestroy(){
-
         BasicInputDetector.OnTouchBegan -= OnTouchBegan;
         BasicInputDetector.OnTouchMoved -= OnTouchMoved;
         BasicInputDetector.OnTouchEnded -= OnTouchEnded;
@@ -85,6 +91,12 @@ public class InteractionTrigger : MonoBehaviour
         if (interactionType == InteractionType.Drag && touchBeganOnTarget){
             //todo: call drag handler with touchPositionDelta
             OnDrag(touchPositionDelta);
+        }
+        if (interactionType == InteractionType.DragX && touchBeganOnTarget){
+            OnDragX(touchPositionDelta.x);
+        }
+        if (interactionType == InteractionType.DragY && touchBeganOnTarget){
+            OnDragY(touchPositionDelta.y);
         }
     }
 
@@ -170,11 +182,53 @@ public class InteractionTrigger : MonoBehaviour
             if (interactionType == InteractionType.DragTwo){
                 OnDragTwo(averagePositionDelta);
             }
+            if (interactionType == InteractionType.DragTwoX){
+                OnDragTwoX(averagePositionDelta.x);
+            }
+            if (interactionType == InteractionType.DragTwoY){
+                OnDragTwoY(averagePositionDelta.y);
+            }
 
             //store the most recent inputs for next frame
             lastTwoFingerAngle = newTwoFingerAngle;
             lastTwoFingerDistance = newTwoFingerDistance;
             lastTwoFingerAveragePosition = newTwoFingerAveragePosition;
+        }
+    }
+
+    private void SetUpLinkedAction(){
+        //switch on the interaction type
+        switch (interactionType){
+            case InteractionType.Tap:
+                OnTap += () => {linkedAction.Activate(1f);};
+                break;
+            case InteractionType.Drag:
+                Debug.LogError("Drag not compatible with basic transform actions, select DragX or DragY instead");
+                break;
+            case InteractionType.DragX:
+                OnDragX += (float delta) => {linkedAction.Activate(delta);};
+                break;
+            case InteractionType.DragY:
+                OnDragY += (float delta) => {linkedAction.Activate(delta);};
+                break;
+            case InteractionType.DragTwo:
+                Debug.LogError("DragTwo not compatible with basic transform actions, select DragTwoX or DragTwoY instead");
+                break;
+            case InteractionType.DragTwoX:
+                OnDragTwoX += (float delta) => {linkedAction.Activate(delta);};
+                break;
+            case InteractionType.DragTwoY:
+                OnDragTwoY += (float delta) => {linkedAction.Activate(delta);};
+                break;
+            case InteractionType.Pinch:
+                OnPinch += (float delta) => {linkedAction.Activate(delta);};
+                break;
+            case InteractionType.Rotate:
+                OnRotate += (float delta) => {linkedAction.Activate(delta);};
+                break;
+            default:
+                Debug.LogError("InteractionType not set");
+                break;
         }
     }
 
@@ -184,6 +238,10 @@ public class InteractionTrigger : MonoBehaviour
     public delegate void DelegateFloatEvent(float delta);
     public DelegateFloatEvent OnPinch = (float delta) => {};
     public DelegateFloatEvent OnRotate = (float delta) => {};
+    public DelegateFloatEvent OnDragX = (float delta) => {};
+    public DelegateFloatEvent OnDragY = (float delta) => {};
+    public DelegateFloatEvent OnDragTwoX = (float delta) => {};
+    public DelegateFloatEvent OnDragTwoY = (float delta) => {};
 
     public delegate void DelegateVector2Event(Vector2 delta);
     public DelegateVector2Event OnDrag = (Vector2 delta) => {};
