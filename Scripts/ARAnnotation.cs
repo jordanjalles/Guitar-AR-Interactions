@@ -82,6 +82,7 @@ public class ARAnnotation : MonoBehaviour
         //add interaction triggers
         InteractionTrigger trigger = gameObject.AddComponent<InteractionTrigger>();
         trigger.OnTap += MoveToAnnotationView;
+        trigger.OnTap += () => {ARSelectable.GetSelected().SetUpAnnotationViewInteractions();};
     }
 
     void OnDisable(){
@@ -94,6 +95,7 @@ public class ARAnnotation : MonoBehaviour
     public void MoveToAnnotationView(){
         Transform selectedItem = ARSelectable.GetSelected().transform;
 
+        
         Transform targetTransform = new GameObject("Animation target transform").transform;
         targetTransform.parent = Camera.main.transform;
         

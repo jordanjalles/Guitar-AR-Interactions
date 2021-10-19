@@ -34,28 +34,36 @@ public class ARSelectable : MonoBehaviour
     }
 
     public void Select(){
-        Debug.Log("Select " + this.name);
         this.isSelected = true;
     
-        RemoveInteractionTriggers(); // remove all interaction triggers to start fresh
 
         ChangeToLayer("OnTop");
         MoveToCameraView();
-        AddTapNotSelfToDeselect();
-        AddDragToRotate();
-        ShowAnnotations();
+        SetUpSelectedInteractions();
+        
         
         //remove selection from the other ar selectables
         foreach (ARSelectable s in selectables){
             if (s != this){
-                s.RemoveInteractionTriggers();
+                s.RemoveTriggersAndActions();
             }
         }
 
-        
-
         //todo: how to animate the ar background color from here?
         //todo: add interaction triggers for drag, rotate, and scale
+    }
+
+    public void SetUpSelectedInteractions(){
+        RemoveTriggersAndActions(); // remove all interaction triggers to start fresh
+        AddTapNotSelfToDeselect();
+        AddDragToRotate();
+        AddPinchToZoom();
+        ShowAnnotations();
+    }
+
+    public void SetUpAnnotationViewInteractions(){
+        RemoveTriggersAndActions(); // remove all interaction triggers to start fresh
+        AddTapToResetSelectedView();
     }
 
     public void Deselect(){
@@ -65,8 +73,7 @@ public class ARSelectable : MonoBehaviour
 
         //todo: how to animate the ar background color?
         HideAnnotations();
-        RemoveInteractionTriggers();
-        RemoveTransformActions();
+        RemoveTriggersAndActions();
         MoveToHomeLocation();
 
         //add selection to the other all ar selectables
@@ -107,12 +114,24 @@ public class ARSelectable : MonoBehaviour
         trigger.OnTap += () => { Select(); };
     }
 
+    public void AddTapToResetSelectedView(){
+        //add interaction trigger component to go to selected view on tap
+        InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
+        trigger.interactionType = InteractionTrigger.InteractionType.Tap;
+        trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
+        trigger.OnTap += () => { 
+            MoveToCameraView();
+            SetUpSelectedInteractions();
+        };
+
+    }
+
     public void AddDragToRotate(){
         //add interaction trigger component to rotate on grab
         BasicTransformAction rotateY = this.gameObject.AddComponent<BasicTransformAction>();
         rotateY.type = BasicTransformAction.Type.Rotate;
         rotateY.axis = BasicTransformAction.Axis.y;
-        rotateY.space = BasicTransformAction.Space.World;
+        rotateY.space = BasicTransformAction.Space.Local;
         rotateY.invertInput = true;
         rotateY.multiplier = 0.3f;
 
@@ -128,7 +147,20 @@ public class ARSelectable : MonoBehaviour
         dragTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
         dragTrigger.OnDrag += (input) => {rotateY.Activate(input.x);};
         dragTrigger.OnDrag += (input) => {rotateX.Activate(input.y);};
+    }
 
+    public void AddPinchToZoom(){
+        //add interaction trigger component to zoom on pinch
+        BasicTransformAction zoom = this.gameObject.AddComponent<BasicTransformAction>();
+        zoom.type = BasicTransformAction.Type.Translate;
+        zoom.axis = BasicTransformAction.Axis.z;
+        zoom.space = BasicTransformAction.Space.Camera;
+        zoom.multiplier = 0.001f;
+
+        InteractionTrigger pinchTrigger = this.gameObject.AddComponent<InteractionTrigger>();
+        pinchTrigger.interactionType = InteractionTrigger.InteractionType.Pinch;
+        pinchTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Any;
+        pinchTrigger.OnPinch += (input) => {zoom.Activate(input);};
     }
 
     public void AddTapNotSelfToDeselect(){
@@ -136,18 +168,24 @@ public class ARSelectable : MonoBehaviour
         InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
         trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
         trigger.OnTap += Deselect;
-        trigger.OnTap += () => { Debug.Log("Deselect " + this.name); };
+    }
+
+    public void RemoveTriggersAndActions(){
+        RemoveInteractionTriggers();
+        RemoveTransformActions();
     }
 
     public void RemoveInteractionTriggers(){
         foreach (InteractionTrigger trigger in GetComponentsInChildren<InteractionTrigger>()){
-            Destroy(trigger);
+            //destroy trigger, ignoring annotations
+            if (!trigger.GetComponent<ARAnnotation>()) Destroy(trigger);
         }
     }
 
     public void RemoveTransformActions(){
         foreach (BasicTransformAction action in GetComponentsInChildren<BasicTransformAction>()){
-            Destroy(action);
+            //destroy action, ignoring annotations  
+            if (!action.GetComponent<ARAnnotation>()) Destroy(action);
         }
     }
 
