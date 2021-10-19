@@ -23,7 +23,8 @@ public class ARSelectable : MonoBehaviour
         this.homePosition = this.transform.position;
         this.homeRotation = this.transform.rotation.eulerAngles;
         this.homeParent = this.transform.parent;
-        Deselect();
+        HideAnnotations();
+        AddTapToSelect();
     }
 
     // remove from selectables list when destroyed
@@ -33,18 +34,16 @@ public class ARSelectable : MonoBehaviour
     }
 
     public void Select(){
+        Debug.Log("Select " + this.name);
         this.isSelected = true;
     
         RemoveInteractionTriggers(); // remove all interaction triggers to start fresh
+
         ChangeToLayer("OnTop");
         MoveToCameraView();
-        
-        //add interaction trigger component for deselecting self on tap empty
-        InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
-        trigger.interactionTarget = InteractionTrigger.InteractionTarget.Empty;
-        trigger.OnTap += () => { Deselect(); };
-
-        //todo: add interaction triggers for drag, rotate, and scale
+        AddTapNotSelfToDeselect();
+        AddDragToRotate();
+        ShowAnnotations();
         
         //remove selection from the other ar selectables
         foreach (ARSelectable s in selectables){
@@ -53,26 +52,21 @@ public class ARSelectable : MonoBehaviour
             }
         }
 
-        //turn on arannotations
-        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>(includeInactive : true)){
-            a.gameObject.SetActive(true);
-        }
+        
 
         //todo: how to animate the ar background color from here?
+        //todo: add interaction triggers for drag, rotate, and scale
     }
 
     public void Deselect(){
+        if (!this.isSelected) return; 
+
         this.isSelected = false;
 
-        //turn off annotations
-        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>()){
-            a.Hide(); //calling hide so that it removes any detail display that may be active
-            a.gameObject.SetActive(false);
-        }
-
         //todo: how to animate the ar background color?
-        
+        HideAnnotations();
         RemoveInteractionTriggers();
+        RemoveTransformActions();
         MoveToHomeLocation();
 
         //add selection to the other all ar selectables
@@ -81,28 +75,79 @@ public class ARSelectable : MonoBehaviour
         }
     }
 
-    public void AddTapToSelect(){
-        //remove others so there aren't duplicates
-        RemoveInteractionTriggers();
+    public void HideAnnotations(){
+        //turn off annotations
+        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>()){
+            a.Hide(); //calling hide so that it removes any detail display that may be active
+            a.gameObject.SetActive(false);
+        }
+    }
 
+    public void ShowAnnotations(){
+        //turn on arannotations
+        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>(includeInactive : true)){
+            a.gameObject.SetActive(true);
+        }
+    }
+
+    public static ARSelectable GetSelected(){
+        foreach (ARSelectable s in selectables){
+            if (s.isSelected){
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public void AddTapToSelect(){
         //add interaction trigger component to select self on tap
         InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
+        trigger.interactionType = InteractionTrigger.InteractionType.Tap;
+        trigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
         trigger.OnTap += () => { Select(); };
     }
 
-    public void AddTapEmptyToDeselect(){
-        //remove others so there aren't duplicates
-        RemoveInteractionTriggers();
+    public void AddDragToRotate(){
+        //add interaction trigger component to rotate on grab
+        BasicTransformAction rotateY = this.gameObject.AddComponent<BasicTransformAction>();
+        rotateY.type = BasicTransformAction.Type.Rotate;
+        rotateY.axis = BasicTransformAction.Axis.y;
+        rotateY.space = BasicTransformAction.Space.World;
+        rotateY.invertInput = true;
+        rotateY.multiplier = 0.3f;
 
+        BasicTransformAction rotateX = this.gameObject.AddComponent<BasicTransformAction>();
+        rotateX.type = BasicTransformAction.Type.Rotate;
+        rotateX.axis = BasicTransformAction.Axis.x;
+        rotateX.space = BasicTransformAction.Space.World;
+        rotateX.invertInput = false;
+        rotateX.multiplier = 0.3f;
+
+        InteractionTrigger dragTrigger = this.gameObject.AddComponent<InteractionTrigger>();
+        dragTrigger.interactionType = InteractionTrigger.InteractionType.Drag;
+        dragTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
+        dragTrigger.OnDrag += (input) => {rotateY.Activate(input.x);};
+        dragTrigger.OnDrag += (input) => {rotateX.Activate(input.y);};
+
+    }
+
+    public void AddTapNotSelfToDeselect(){
         //add interaction trigger component to deselect self on tap
         InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
-        trigger.OnTap += () => { Deselect(); };
-        trigger.interactionTarget = InteractionTrigger.InteractionTarget.Empty;
+        trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
+        trigger.OnTap += Deselect;
+        trigger.OnTap += () => { Debug.Log("Deselect " + this.name); };
     }
 
     public void RemoveInteractionTriggers(){
-        foreach (InteractionTrigger t in GetComponentsInChildren<InteractionTrigger>()){
-            Destroy(t.gameObject);
+        foreach (InteractionTrigger trigger in GetComponentsInChildren<InteractionTrigger>()){
+            Destroy(trigger);
+        }
+    }
+
+    public void RemoveTransformActions(){
+        foreach (BasicTransformAction action in GetComponentsInChildren<BasicTransformAction>()){
+            Destroy(action);
         }
     }
 
@@ -143,7 +188,5 @@ public class ARSelectable : MonoBehaviour
         animator.OnComplete += () => {ChangeToLayer("Default");};
         animator.OnComplete += () => {transform.parent = homeParent;}; 
         animator.OnComplete += () => {Destroy(targetTransform.gameObject);}; //destroy the target transform
-
-        
     }
 }

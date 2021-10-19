@@ -14,7 +14,7 @@ public class InteractionTrigger : MonoBehaviour
     //defaults to self
     public InteractionTarget interactionTarget = InteractionTarget.Self; 
 
-    public BasicTransformAction actionFromEditor; //todo: add this to events if not null
+    public BasicTransformAction linkedAction; //todo: add this to events if not null
     
     private Camera mainCamera;
     private Vector2 lastTouchPosition;
@@ -29,101 +29,56 @@ public class InteractionTrigger : MonoBehaviour
 
     private void Awake()
     {
-        if (interactionType == InteractionType.Tap){
-            BasicInputDetector.OnTouchBegan += OnTouchBegan;
-            BasicInputDetector.OnTouchEnded += OnTouchEnded;
-        }
-        else if (interactionType == InteractionType.Drag){
-            BasicInputDetector.OnTouchBegan += OnTouchBegan;
-            BasicInputDetector.OnTouchMoved += OnTouchMoved;
-            BasicInputDetector.OnTouchEnded += OnTouchEnded;
-        }
-        else if (interactionType == InteractionType.DragTwo || interactionType == InteractionType.Rotate || interactionType == InteractionType.Pinch){
-            BasicInputDetector.OnTwoTouches += OnTwoTouches;
-        }
-        else if (interactionType == InteractionType.Swipe){
+        Debug.Log("InteractionTrigger Awake: " + interactionType);
+
+        BasicInputDetector.OnTouchBegan += OnTouchBegan;
+        BasicInputDetector.OnTouchMoved += OnTouchMoved;
+        BasicInputDetector.OnTouchEnded += OnTouchEnded;
+
+        BasicInputDetector.OnTwoTouches += OnTwoTouches;
+
+        if (interactionType == InteractionType.Swipe){
             //SwipeDetector.OnSwipe += OnSwipe;
         }
         mainCamera = Camera.main;
     }
 
     private void OnDestroy(){
-        if (interactionType == InteractionType.Tap){
-            BasicInputDetector.OnTouchBegan -= OnTouchBegan;
-            BasicInputDetector.OnTouchEnded -= OnTouchEnded;
-        }
-        else if (interactionType == InteractionType.Drag){
-            BasicInputDetector.OnTouchBegan -= OnTouchBegan;
-            BasicInputDetector.OnTouchMoved -= OnTouchMoved;
-            BasicInputDetector.OnTouchEnded -= OnTouchEnded;
-        }
-        else if (interactionType == InteractionType.DragTwo || interactionType == InteractionType.Rotate || interactionType == InteractionType.Pinch){
-            BasicInputDetector.OnTwoTouches -= OnTwoTouches;
-        }
-        else if (interactionType == InteractionType.Swipe){
+
+        BasicInputDetector.OnTouchBegan -= OnTouchBegan;
+        BasicInputDetector.OnTouchMoved -= OnTouchMoved;
+        BasicInputDetector.OnTouchEnded -= OnTouchEnded;
+    
+        BasicInputDetector.OnTwoTouches -= OnTwoTouches;
+        
+        if (interactionType == InteractionType.Swipe){
             //SwipeDetector.OnSwipe -= OnSwipe;
         }
     }
 
-
     private void OnTouchBegan(Vector2 tapPosition)
     {
         lastTouchPosition = tapPosition;
-
-        Ray ray = mainCamera.ScreenPointToRay(tapPosition);
-        RaycastHit hitObject;
-        if(Physics.Raycast(ray, out hitObject))
-        {
-            if (interactionTarget == InteractionTarget.Self){
-                if (hitObject.transform == transform){
-                    touchBeganOnTarget = true;
-                }else{
-                    touchBeganOnTarget = false;
-                }
-            }
-            else if (interactionTarget == InteractionTarget.NotSelf){
-                if (hitObject.transform != transform){
-                    touchBeganOnTarget = true;
-                }else{
-                    touchBeganOnTarget = false;
-                }
-            }
-            else if (interactionTarget == InteractionTarget.Any){
-                touchBeganOnTarget = true;
-            } 
-        } else if (interactionTarget == InteractionTarget.Empty){
-            touchBeganOnTarget = true;
-        } else {
-            touchBeganOnTarget = false;
-        }
+        touchBeganOnTarget = TouchOnInteractionTarget(tapPosition); 
     }
 
     private void OnTouchEnded(Vector2 tapPosition){
         lastTouchPosition = tapPosition;
 
-        Ray ray = mainCamera.ScreenPointToRay(tapPosition);
-        RaycastHit hitObject;
-        if(Physics.Raycast(ray, out hitObject))
-        {
-            if (interactionTarget == InteractionTarget.Self){
-                if (hitObject.transform == transform && touchBeganOnTarget){
-                    OnTap();
+        if (interactionType == InteractionType.Tap){
+            //if touch began and ended on target, it's a tap
+            if (touchBeganOnTarget && TouchOnInteractionTarget(tapPosition)){
+                if (linkedAction != null){
+                    linkedAction.Activate(1f);
                 }
-            }
-            else if (interactionTarget == InteractionTarget.NotSelf && touchBeganOnTarget){
-                if (hitObject.transform != transform){
-                    OnTap();
-                }
-            }
-            else if (interactionTarget == InteractionTarget.Any){
                 OnTap();
             }
-        } else if (interactionTarget == InteractionTarget.Empty && touchBeganOnTarget){
-            OnTap();
         }
     }
 
     private void OnTouchMoved(Vector2 tapPosition){
+        Debug.Log("touch moved");
+
         Vector2 touchPositionDelta = tapPosition - lastTouchPosition;
         lastTouchPosition = tapPosition;
 
@@ -133,7 +88,58 @@ public class InteractionTrigger : MonoBehaviour
         }
     }
 
+    private bool TouchOnInteractionTarget(Vector2 tapPosition){
+        Ray ray = mainCamera.ScreenPointToRay(tapPosition);
+        RaycastHit hitObject;
+
+        if (interactionTarget == InteractionTarget.Self){
+            if(Physics.Raycast(ray, out hitObject))
+            {
+                if (hitObject.transform == transform || hitObject.transform.IsChildOf(transform)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }
+
+        if (interactionTarget == InteractionTarget.NotSelf){
+            if(Physics.Raycast(ray, out hitObject))
+            {
+                if (hitObject.transform == transform || hitObject.transform.IsChildOf(transform)){
+                    return false;
+                }else{
+                    return true;
+                }
+            }else{
+                return true;
+            }
+        }
+
+        if (interactionTarget == InteractionTarget.Empty){
+            if(Physics.Raycast(ray, out hitObject))
+            {
+                return false;
+            }else{
+                return true;
+            }
+        } 
+        
+        if (interactionTarget == InteractionTarget.Any){
+            return true;
+        } 
+
+        Debug.LogError("InteractionTarget not set");
+        return false;
+    }
+
     private void OnTwoTouches(Vector2 touchOne, Vector2 touchTwo){
+        if (interactionType != InteractionType.Rotate || interactionType != InteractionType.Pinch || interactionType != InteractionType.DragTwo){
+            return;
+        }
+
         //get the distance, angle, and average position of the two touches
         float newTwoFingerDistance = Vector2.Distance(touchOne, touchTwo);
         float newTwoFingerAngle = Vector2.Angle(new Vector2(0, 1), touchOne-touchTwo)*Mathf.Sign(touchOne.x - touchTwo.x);

@@ -78,14 +78,50 @@ public class ARAnnotation : MonoBehaviour
     //todo
     //add interaction triggers on enable
     //remove interaction triggers on disable
+    void OnEnable(){
+        //add interaction triggers
+        InteractionTrigger trigger = gameObject.AddComponent<InteractionTrigger>();
+        trigger.OnTap += MoveToAnnotationView;
+    }
+
+    void OnDisable(){
+        //remove interaction triggers
+        foreach (InteractionTrigger trigger in gameObject.GetComponents<InteractionTrigger>()){
+            Destroy(trigger);
+        }
+    }
+
+    public void MoveToAnnotationView(){
+        Transform selectedItem = ARSelectable.GetSelected().transform;
+
+        Transform targetTransform = new GameObject("Animation target transform").transform;
+        targetTransform.parent = Camera.main.transform;
+        
+        //rotate it to look at the camera
+        targetTransform.rotation = Camera.main.transform.rotation;
+        
+        //move the target location to within the annotation focus distance - in front of the camera
+        targetTransform.position = Camera.main.transform.position + (Camera.main.transform.forward * maxFocusDistance * 0.9f);
+        
+        Vector3 rotatePoint = targetTransform.position; //store this point as the point to rotate around (where the annotation will be)
+
+        //adjust for the annotation's position relative to the item
+        targetTransform.position += targetTransform.TransformDirection(selectedItem.InverseTransformDirection(selectedItem.position - transform.position));
+
+        //rotate around the annotation based on the annotation's recommended view rotation
+        targetTransform.RotateAround(rotatePoint, targetTransform.up, recommendedCameraRotation.y);
+        targetTransform.RotateAround(rotatePoint, targetTransform.right, recommendedCameraRotation.x);
+        targetTransform.RotateAround(rotatePoint, targetTransform.forward, recommendedCameraRotation.z);
+        
+        AnimateTransform animator = selectedItem.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the focused location
+        animator.Configure(targetTransform, 1f, AnimationCurve.EaseInOut(0f, 0f, 1f, 1f));
+    }
 
     void Update()
     {
         //check the distance between the camera and the object
         float distance = Vector3.Distance(m_Camera.transform.position, transform.position);
-        
-
-
+    
         if (state == State.hidden){
             if (distance < maxVisibilityDistance){
                 Hint();
@@ -109,10 +145,6 @@ public class ARAnnotation : MonoBehaviour
                 Hide();
             }
         }
-
-
-
-        
     }
 
     public void Hint(){     
