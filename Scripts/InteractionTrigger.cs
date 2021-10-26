@@ -203,7 +203,7 @@ public class InteractionTrigger : MonoBehaviour
                 OnTap += () => {linkedAction.Activate(1f);};
                 break;
             case InteractionType.Drag:
-                Debug.LogError("Drag not compatible with basic transform actions, select DragX or DragY instead");
+                Debug.LogError("Drag not compatible with basic transform actions, try DragX or DragY instead");
                 break;
             case InteractionType.DragX:
                 OnDragX += (float delta) => {linkedAction.Activate(delta);};
@@ -212,7 +212,7 @@ public class InteractionTrigger : MonoBehaviour
                 OnDragY += (float delta) => {linkedAction.Activate(delta);};
                 break;
             case InteractionType.DragTwo:
-                Debug.LogError("DragTwo not compatible with basic transform actions, select DragTwoX or DragTwoY instead");
+                Debug.LogError("DragTwo not compatible with basic transform actions, try DragTwoX or DragTwoY instead");
                 break;
             case InteractionType.DragTwoX:
                 OnDragTwoX += (float delta) => {linkedAction.Activate(delta);};
