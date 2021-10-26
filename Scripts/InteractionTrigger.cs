@@ -148,7 +148,11 @@ public class InteractionTrigger : MonoBehaviour
     }
 
     private void OnTwoTouches(Vector2 touchOne, Vector2 touchTwo){
-        if (interactionType != InteractionType.Rotate && interactionType != InteractionType.Pinch && interactionType != InteractionType.DragTwo){
+        if (interactionType != InteractionType.Rotate 
+            && interactionType != InteractionType.Pinch 
+            && interactionType != InteractionType.DragTwo
+            && interactionType != InteractionType.DragTwoX
+            && interactionType != InteractionType.DragTwoY){
             return;
         }
 
@@ -183,6 +187,7 @@ public class InteractionTrigger : MonoBehaviour
                 OnDragTwo(averagePositionDelta);
             }
             if (interactionType == InteractionType.DragTwoX){
+                Debug.Log("DragTwoX: "+ averagePositionDelta.x);
                 OnDragTwoX(averagePositionDelta.x);
             }
             if (interactionType == InteractionType.DragTwoY){
