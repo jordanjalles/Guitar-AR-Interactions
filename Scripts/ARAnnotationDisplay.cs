@@ -36,7 +36,7 @@ public class ARAnnotationDisplay : MonoBehaviour
     //it also initializes the size of sprite and rect transform
     public void DisplayTexture(Texture2D texture){
         Debug.Log("Displaying texture");
-        gameObject.active = true;
+        gameObject.SetActive(true);
         //set the image sprite to the texture passed in
         GetComponent<Image>().sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
         
@@ -52,7 +52,7 @@ public class ARAnnotationDisplay : MonoBehaviour
 
     //function that hides the texture
     public void HideTexture(){
-        gameObject.active = false;
+        gameObject.SetActive(false);
         //set the image sprite to null
         GetComponent<Image>().sprite = null;
 

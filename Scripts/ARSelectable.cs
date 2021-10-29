@@ -10,35 +10,204 @@ public class ARSelectable : MonoBehaviour
     public Vector3 homeRotation;
     public Transform homeParent;
     public Color backgroundColor;
+
+    [SerializeField]
+    private AnimationCurve curveForTransitions;
+
+    private static List<ARSelectable> selectables = new List<ARSelectable>();
     
     // Start is called before the first frame update
     void Start()
     {
+        selectables.Add(this);
         this.homePosition = this.transform.position;
         this.homeRotation = this.transform.rotation.eulerAngles;
         this.homeParent = this.transform.parent;
-        Deselect();
+        HideAnnotations();
+        AddTapToSelect();
+    }
+
+    // remove from selectables list when destroyed
+    private void OnDestroy()
+    {
+        selectables.Remove(this);
     }
 
     public void Select(){
+        if(isSelected){ return;}
+
         this.isSelected = true;
-        //Debug.Log("Selecting " + this.name);
-        //get all arannotations in children and activate them
-        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>(includeInactive : true)){
-            a.gameObject.SetActive(true);
-            //Debug.Log("Activating " + a.name);
+
+        //ChangeToLayer("OnTop");
+        MoveToCameraView();
+        SetUpSelectedInteractions();
+        PlayAudio();
+
+        //if there is a selected item background component in the scene, change its color
+        SelectedItemBackground bg = GameObject.Find("SelectedItemBG").GetComponent<SelectedItemBackground>();
+        if(bg != null){
+            bg.selectedColor = this.backgroundColor;
+            //bg.OnItemSelected();
         }
+        
+        //remove selection from the other ar selectables
+        foreach (ARSelectable s in selectables){
+            if (s != this){
+                s.RemoveTriggersAndActions();
+            }
+        }
+
+        //todo: how to animate the ar background color from here?
+        //todo: add interaction triggers for drag, rotate, and scale
+    }
+
+    public void SetUpSelectedInteractions(){
+        RemoveTriggersAndActions(); // remove all interaction triggers to start fresh
+        AddTapNotSelfToDeselect();
+        AddDragToRotate();
+        AddPinchToZoom();
+        ShowAnnotations();
+    }
+
+    public void SetUpAnnotationViewInteractions(){
+        RemoveTriggersAndActions(); // remove all interaction triggers to start fresh
+        AddTapToResetSelectedView();
     }
 
     public void Deselect(){
-        this.isSelected = false;
-        //Debug.Log("Deselecting " + this.name);
-        //turn off annotations
+        if (!this.isSelected) return; 
 
+        //todo: how to animate the ar background color?
+        HideAnnotations();
+        RemoveTriggersAndActions();
+        AnimateTransform animator = MoveToHomeLocation();
+        animator.OnComplete += () => {
+            this.isSelected = false;
+            
+            //add selection to the other all ar selectables
+            foreach (ARSelectable s in selectables){
+                s.AddTapToSelect();
+            }
+        };
+
+        SelectedItemBackground bg = GameObject.Find("SelectedItemBG").GetComponent<SelectedItemBackground>();
+        if(bg != null){
+            bg.OnItemDeselected();
+        }
+
+    }
+
+    public void HideAnnotations(){
+        //turn off annotations
         foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>()){
-            //Debug.Log("Deactivating " + a.name);
             a.Hide(); //calling hide so that it removes any detail display that may be active
             a.gameObject.SetActive(false);
+        }
+    }
+
+    public void ShowAnnotations(){
+        //turn on arannotations
+        foreach (ARAnnotation a in GetComponentsInChildren<ARAnnotation>(includeInactive : true)){
+            a.gameObject.SetActive(true);
+        }
+    }
+
+    public static ARSelectable GetSelected(){
+        foreach (ARSelectable s in selectables){
+            if (s.isSelected){
+                return s;
+            }
+        }
+        return null;
+    }
+
+    public void AddTapToSelect(){
+        //add interaction trigger component to select self on tap
+        InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
+        trigger.interactionType = InteractionTrigger.InteractionType.Tap;
+        trigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
+        trigger.name = "Tap to select";
+        trigger.OnTap += () => { Select(); };
+    }
+
+    public void AddTapToResetSelectedView(){
+        //add interaction trigger component to go to selected view on tap
+        InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
+        trigger.interactionType = InteractionTrigger.InteractionType.Tap;
+        trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
+        trigger.name = "Tap to reset selected view";
+        trigger.OnTap += () => { 
+            MoveToCameraView();
+            SetUpSelectedInteractions();
+        };
+
+    }
+
+    public void AddDragToRotate(){
+        //add interaction trigger component to rotate on grab
+        BasicTransformAction rotateY = this.gameObject.AddComponent<BasicTransformAction>();
+        rotateY.type = BasicTransformAction.Type.Rotate;
+        rotateY.axis = BasicTransformAction.Axis.y;
+        rotateY.space = BasicTransformAction.Space.Local;
+        rotateY.invertInput = true;
+        rotateY.multiplier = 0.3f;
+
+        BasicTransformAction rotateX = this.gameObject.AddComponent<BasicTransformAction>();
+        rotateX.type = BasicTransformAction.Type.Rotate;
+        rotateX.axis = BasicTransformAction.Axis.x;
+        rotateX.space = BasicTransformAction.Space.Camera;
+        rotateX.invertInput = false;
+        rotateX.multiplier = 0.3f;
+
+        InteractionTrigger dragTrigger = this.gameObject.AddComponent<InteractionTrigger>();
+        dragTrigger.interactionType = InteractionTrigger.InteractionType.Drag;
+        dragTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
+        dragTrigger.OnDrag += (input) => {
+                rotateY.Activate(input.x);
+                rotateX.Activate(input.y);
+            };
+        dragTrigger.name = "Drag to rotate";
+    }
+
+    public void AddPinchToZoom(){
+        //add interaction trigger component to zoom on pinch
+        BasicTransformAction zoom = this.gameObject.AddComponent<BasicTransformAction>();
+        zoom.type = BasicTransformAction.Type.Translate;
+        zoom.axis = BasicTransformAction.Axis.z;
+        zoom.space = BasicTransformAction.Space.Camera;
+        zoom.multiplier = 0.001f;
+
+        InteractionTrigger pinchTrigger = this.gameObject.AddComponent<InteractionTrigger>();
+        pinchTrigger.interactionType = InteractionTrigger.InteractionType.Pinch;
+        pinchTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Any;
+        pinchTrigger.OnPinch += (input) => {zoom.Activate(input);};
+        pinchTrigger.name = "Pinch to zoom";
+    }
+
+    public void AddTapNotSelfToDeselect(){
+        //add interaction trigger component to deselect self on tap
+        InteractionTrigger trigger = this.gameObject.AddComponent<InteractionTrigger>();
+        trigger.interactionTarget = InteractionTrigger.InteractionTarget.NotSelf;
+        trigger.OnTap += Deselect;
+        trigger.name = "Deselect";
+    }
+
+    public void RemoveTriggersAndActions(){
+        RemoveInteractionTriggers();
+        RemoveTransformActions();
+    }
+
+    public void RemoveInteractionTriggers(){
+        foreach (InteractionTrigger trigger in GetComponentsInChildren<InteractionTrigger>()){
+            //destroy trigger, ignoring annotations
+            if (!trigger.GetComponent<ARAnnotation>()) Destroy(trigger);
+        }
+    }
+
+    public void RemoveTransformActions(){
+        foreach (BasicTransformAction action in GetComponentsInChildren<BasicTransformAction>()){
+            //destroy action, ignoring annotations  
+            if (!action.GetComponent<ARAnnotation>()) Destroy(action);
         }
     }
 
@@ -48,4 +217,40 @@ public class ARSelectable : MonoBehaviour
         }
     }
 
+    public void PlayAudio(){
+        if (this.GetComponent<AudioSource>() != null){
+            this.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    private AnimateTransform MoveToCameraView(){
+        Transform targetTransform = new GameObject("Animation target transform").transform;
+        targetTransform.parent = Camera.main.transform;
+
+        //move location to 1.2 meters in front of the camera
+        targetTransform.position = Camera.main.transform.position + (Camera.main.transform.forward * 1.2f);
+        //rotate to look at the camera.
+        targetTransform.rotation = Camera.main.transform.rotation;
+
+        AnimateTransform animator = gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
+        animator.Configure(targetTransform, 1f, curveForTransitions);
+        animator.OnComplete += () => {transform.parent = Camera.main.transform;}; //when the animation is complete, parent the guitar body to the camera
+        animator.OnComplete += () => {Destroy(targetTransform.gameObject);}; //destroy the target transform
+
+        return animator;
+    }
+
+    private AnimateTransform MoveToHomeLocation(){
+        Transform targetTransform = new GameObject("Animation target transform").transform;
+        targetTransform.position = this.homePosition;
+        targetTransform.rotation = Quaternion.Euler(this.homeRotation);
+        transform.parent = homeParent;
+
+        AnimateTransform animator = gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
+        animator.Configure(targetTransform, 1f, curveForTransitions);
+        animator.OnComplete += () => {ChangeToLayer("Default");};
+        animator.OnComplete += () => {Destroy(targetTransform.gameObject);}; //destroy the target transform
+
+        return animator;
+    }
 }
