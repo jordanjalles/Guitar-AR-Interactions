@@ -34,13 +34,21 @@ public class ARSelectable : MonoBehaviour
     }
 
     public void Select(){
-        this.isSelected = true;
-    
+        if(isSelected){ return;}
 
-        ChangeToLayer("OnTop");
+        this.isSelected = true;
+
+        //ChangeToLayer("OnTop");
         MoveToCameraView();
         SetUpSelectedInteractions();
-        
+        PlayAudio();
+
+        //if there is a selected item background component in the scene, change its color
+        SelectedItemBackground bg = GameObject.Find("SelectedItemBG").GetComponent<SelectedItemBackground>();
+        if(bg != null){
+            bg.selectedColor = this.backgroundColor;
+            //bg.OnItemSelected();
+        }
         
         //remove selection from the other ar selectables
         foreach (ARSelectable s in selectables){
@@ -69,17 +77,24 @@ public class ARSelectable : MonoBehaviour
     public void Deselect(){
         if (!this.isSelected) return; 
 
-        this.isSelected = false;
-
         //todo: how to animate the ar background color?
         HideAnnotations();
         RemoveTriggersAndActions();
-        MoveToHomeLocation();
+        AnimateTransform animator = MoveToHomeLocation();
+        animator.OnComplete += () => {
+            this.isSelected = false;
+            
+            //add selection to the other all ar selectables
+            foreach (ARSelectable s in selectables){
+                s.AddTapToSelect();
+            }
+        };
 
-        //add selection to the other all ar selectables
-        foreach (ARSelectable s in selectables){
-            s.AddTapToSelect();
+        SelectedItemBackground bg = GameObject.Find("SelectedItemBG").GetComponent<SelectedItemBackground>();
+        if(bg != null){
+            bg.OnItemDeselected();
         }
+
     }
 
     public void HideAnnotations(){
@@ -140,15 +155,17 @@ public class ARSelectable : MonoBehaviour
         BasicTransformAction rotateX = this.gameObject.AddComponent<BasicTransformAction>();
         rotateX.type = BasicTransformAction.Type.Rotate;
         rotateX.axis = BasicTransformAction.Axis.x;
-        rotateX.space = BasicTransformAction.Space.World;
+        rotateX.space = BasicTransformAction.Space.Camera;
         rotateX.invertInput = false;
         rotateX.multiplier = 0.3f;
 
         InteractionTrigger dragTrigger = this.gameObject.AddComponent<InteractionTrigger>();
         dragTrigger.interactionType = InteractionTrigger.InteractionType.Drag;
         dragTrigger.interactionTarget = InteractionTrigger.InteractionTarget.Self;
-        dragTrigger.OnDrag += (input) => {rotateY.Activate(input.x);};
-        dragTrigger.OnDrag += (input) => {rotateX.Activate(input.y);};
+        dragTrigger.OnDrag += (input) => {
+                rotateY.Activate(input.x);
+                rotateX.Activate(input.y);
+            };
         dragTrigger.name = "Drag to rotate";
     }
 
@@ -206,7 +223,7 @@ public class ARSelectable : MonoBehaviour
         }
     }
 
-    private void MoveToCameraView(){
+    private AnimateTransform MoveToCameraView(){
         Transform targetTransform = new GameObject("Animation target transform").transform;
         targetTransform.parent = Camera.main.transform;
 
@@ -219,17 +236,21 @@ public class ARSelectable : MonoBehaviour
         animator.Configure(targetTransform, 1f, curveForTransitions);
         animator.OnComplete += () => {transform.parent = Camera.main.transform;}; //when the animation is complete, parent the guitar body to the camera
         animator.OnComplete += () => {Destroy(targetTransform.gameObject);}; //destroy the target transform
+
+        return animator;
     }
 
-    private void MoveToHomeLocation(){
+    private AnimateTransform MoveToHomeLocation(){
         Transform targetTransform = new GameObject("Animation target transform").transform;
         targetTransform.position = this.homePosition;
         targetTransform.rotation = Quaternion.Euler(this.homeRotation);
+        transform.parent = homeParent;
 
         AnimateTransform animator = gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the selected guitar location
         animator.Configure(targetTransform, 1f, curveForTransitions);
         animator.OnComplete += () => {ChangeToLayer("Default");};
-        animator.OnComplete += () => {transform.parent = homeParent;}; 
         animator.OnComplete += () => {Destroy(targetTransform.gameObject);}; //destroy the target transform
+
+        return animator;
     }
 }

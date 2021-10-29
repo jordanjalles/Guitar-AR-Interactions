@@ -5,7 +5,7 @@ using UnityEngine;
 public class InteractionTrigger : MonoBehaviour
 {
     [SerializeField]
-    public string name = "default";
+    public new string name = "default";
 
     //type of interaction that will trigger 
     public enum InteractionType {Tap, Drag, DragTwo, DragX, DragY, DragTwoX, DragTwoY, Rotate, Pinch, Swipe};
