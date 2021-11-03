@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44649762, g: 0.49632454, b: 0.5747699, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_FocusMode: -1
   m_LightEstimationMode: -1
   m_AutoFocus: 1
-  m_LightEstimation: 0
+  m_LightEstimation: 7
   m_FacingDirection: 1
 --- !u!114 &22732923
 MonoBehaviour:
@@ -235,7 +235,7 @@ MonoBehaviour:
   m_PoseProviderComponent: {fileID: 0}
   m_TrackingType: 0
   m_UpdateType: 0
-  m_UseRelativeTransform: 0
+  m_UseRelativeTransform: 1
 --- !u!4 &22732924
 Transform:
   m_ObjectHideFlags: 0
@@ -1629,6 +1629,30 @@ MonoBehaviour:
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
   backgroundColor: {r: 0.3018868, g: 0.23463356, b: 0.17799929, a: 1}
+  curveForTransitions:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!65 &518433234
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1946,7 +1970,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 7e-45, z: 9.1835e-41, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: -1.5066378e+22, z: 4.5915e-41, w: 9.951505e-32}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
@@ -1958,13 +1982,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 705507993}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
+  m_LocalRotation: {x: 0.6335897, y: 0.23644775, z: 0.24054088, w: 0.6962734}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 50.224, y: 82.337, z: 82.69}
 --- !u!1 &731204256
 GameObject:
   m_ObjectHideFlags: 0
@@ -1977,7 +2001,7 @@ GameObject:
   - component: {fileID: 731204259}
   - component: {fileID: 731204258}
   m_Layer: 0
-  m_Name: SecondCamera
+  m_Name: OnTopCamera
   m_TagString: SecondCam
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2495,6 +2519,30 @@ MonoBehaviour:
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
   backgroundColor: {r: 0.13314347, g: 0.13436173, b: 0.1509434, a: 1}
+  curveForTransitions:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!65 &1194721506
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3319,6 +3367,30 @@ MonoBehaviour:
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
   backgroundColor: {r: 0.9528302, g: 0.91237986, b: 0.91237986, a: 1}
+  curveForTransitions:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!65 &1451145243
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4207,7 +4279,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1902540447}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: 0.11411123, z: -0, w: 0.99346805}
   m_LocalPosition: {x: 0, y: 0, z: 0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4217,7 +4289,7 @@ Transform:
   - {fileID: 1357267561}
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 13.105, z: 0}
 --- !u!114 &1902540449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4347,6 +4419,30 @@ MonoBehaviour:
   homeRotation: {x: 0, y: 0, z: 0}
   homeParent: {fileID: 0}
   backgroundColor: {r: 0.9528302, g: 0.35506406, b: 0.48431072, a: 1}
+  curveForTransitions:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!65 &1980159963
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4607,7 +4703,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2012278687}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.212, y: -0.016, z: 0.579}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 22732924}
