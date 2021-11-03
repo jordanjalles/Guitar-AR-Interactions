@@ -91,5 +91,16 @@ public class CarouselController : MonoBehaviour
         
     }
 
+    //take a string message and go to that carousel item
+    public void GoToItem(string itemName){
+        for (int i = 0; i < items.Count; i++){
+            if (items[i].name == itemName){
+                centerIndex = i;
+                UpdateCarouselItemTransforms(centerIndex);
+                break;
+            }
+        }
+    }
+
 
 }
