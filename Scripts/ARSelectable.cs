@@ -38,7 +38,7 @@ public class ARSelectable : MonoBehaviour
 
         this.isSelected = true;
 
-        //ChangeToLayer("OnTop");
+        ChangeToLayer("OnTop");
         MoveToCameraView();
         SetUpSelectedInteractions();
         PlayAudio();

@@ -2000,6 +2000,7 @@ GameObject:
   - component: {fileID: 731204257}
   - component: {fileID: 731204259}
   - component: {fileID: 731204258}
+  - component: {fileID: 731204260}
   m_Layer: 0
   m_Name: OnTopCamera
   m_TagString: SecondCam
@@ -2072,6 +2073,18 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &731204260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731204256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecff4bd67205a408aacd90fad1cbb459, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &854905462
 PrefabInstance:
   m_ObjectHideFlags: 0
