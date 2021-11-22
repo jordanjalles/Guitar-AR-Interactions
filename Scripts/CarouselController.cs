@@ -46,7 +46,7 @@ public class CarouselController : MonoBehaviour
         selectedTargetLocation.position = camera.transform.position + camera.transform.forward * targetDistance;
         selectedTargetLocation.rotation = camera.transform.rotation;
 
-        UpdateCarouselItemTransforms(centerIndex);
+        UpdateCarouselItems(centerIndex);
     }
 
 
@@ -69,6 +69,21 @@ public class CarouselController : MonoBehaviour
         }
     }
 
+    private void UpdateCarouselItemSelection(int centerIndex){
+        for (int i = 0; i < items.Count; i++){
+            if (i == centerIndex){
+                items[i].GetComponent<CarouselItem>().Select();
+            }else{
+                items[i].GetComponent<CarouselItem>().Deselect();
+            }
+        }
+    }
+
+    private void UpdateCarouselItems(int centerIndex){
+        UpdateCarouselItemTransforms(centerIndex);
+        UpdateCarouselItemSelection(centerIndex);
+    }
+
     private void AnimateItemToTransform(Transform item, Transform targetTransform, bool destroyTargetTransform = true){        
         AnimateTransform animator = item.gameObject.AddComponent<AnimateTransform>(); //animate the guitar body to the focused location
         animator.Configure(targetTransform, transitionTime, curveForTransitions);
@@ -82,11 +97,11 @@ public class CarouselController : MonoBehaviour
     {
         if (data.Direction == SwipeDirection.Left){
             centerIndex = Mathf.Min(centerIndex + 1, items.Count - 1);
-            UpdateCarouselItemTransforms(centerIndex);
+            UpdateCarouselItems(centerIndex);
         }
         else if (data.Direction == SwipeDirection.Right){
             centerIndex = Mathf.Max(centerIndex - 1, 0);
-            UpdateCarouselItemTransforms(centerIndex);
+            UpdateCarouselItems(centerIndex);
         }
         
     }
@@ -96,7 +111,7 @@ public class CarouselController : MonoBehaviour
         for (int i = 0; i < items.Count; i++){
             if (items[i].name == itemName){
                 centerIndex = i;
-                UpdateCarouselItemTransforms(centerIndex);
+                UpdateCarouselItems(centerIndex);
                 break;
             }
         }

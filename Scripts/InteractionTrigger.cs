@@ -30,6 +30,8 @@ public class InteractionTrigger : MonoBehaviour
     private bool touchBeganOnTarget = false;
     private bool twoFingersTouching = false;
 
+    public bool enabled = true;
+
     private void Awake()
     {
         Debug.Log("InteractionTrigger Awake: " + interactionType);
@@ -64,11 +66,15 @@ public class InteractionTrigger : MonoBehaviour
 
     private void OnTouchBegan(Vector2 tapPosition)
     {
+        if(!enabled)return;
+
         lastTouchPosition = tapPosition;
         touchBeganOnTarget = TouchOnInteractionTarget(tapPosition); 
     }
 
     private void OnTouchEnded(Vector2 tapPosition){
+        if(!enabled)return;
+        
         lastTouchPosition = tapPosition;
 
         if (interactionType == InteractionType.Tap){
@@ -83,6 +89,8 @@ public class InteractionTrigger : MonoBehaviour
     }
 
     private void OnTouchMoved(Vector2 tapPosition){
+        if(!enabled)return;
+
         Debug.Log("touch moved");
 
         Vector2 touchPositionDelta = tapPosition - lastTouchPosition;
@@ -101,6 +109,7 @@ public class InteractionTrigger : MonoBehaviour
     }
 
     private bool TouchOnInteractionTarget(Vector2 tapPosition){
+        
         Ray ray = mainCamera.ScreenPointToRay(tapPosition);
         RaycastHit hitObject;
 
@@ -148,6 +157,8 @@ public class InteractionTrigger : MonoBehaviour
     }
 
     private void OnTwoTouches(Vector2 touchOne, Vector2 touchTwo){
+        if(!enabled)return;
+        
         if (interactionType != InteractionType.Rotate 
             && interactionType != InteractionType.Pinch 
             && interactionType != InteractionType.DragTwo

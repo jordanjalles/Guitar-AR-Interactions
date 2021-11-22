@@ -22,6 +22,10 @@ public class CarouselItem : MonoBehaviour
             a.gameObject.SetActive(true);
             //Debug.Log("Activating " + a.name);
         }
+
+        foreach (InteractionTrigger it in GetComponentsInChildren<InteractionTrigger>()){
+            it.enabled = true;
+        }
     }
 
     public void Deselect(){
@@ -33,6 +37,9 @@ public class CarouselItem : MonoBehaviour
             //Debug.Log("Deactivating " + a.name);
             a.Hide(); //calling hide so that it removes any detail display that may be active
             a.gameObject.SetActive(false);
+        }
+        foreach (InteractionTrigger it in GetComponentsInChildren<InteractionTrigger>()){
+            it.enabled = false;
         }
     }
 
